@@ -1,3 +1,3 @@
 
-rootProject.name = "LocalServer"
+rootProject.name = "HttpServer"
 

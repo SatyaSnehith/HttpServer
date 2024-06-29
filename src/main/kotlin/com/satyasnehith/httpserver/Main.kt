@@ -1,9 +1,18 @@
 package com.satyasnehith.httpserver
 
-fun main(args: Array<String>) {
-    println("Hello World!")
+import kotlinx.coroutines.*
 
-    // Try adding program arguments via Run/Debug configuration.
-    // Learn more about running applications: https://www.jetbrains.com/help/idea/running-applications.html.
-    println("Program arguments: ${args.joinToString()}")
+@OptIn(DelicateCoroutinesApi::class)
+suspend fun main(args: Array<String>) {
+    println("HttpServer")
+
+    val server = HttpServer()
+
+    GlobalScope.launch {
+        delay(5000)
+        server.stop()
+    }
+
+    server.start()
+
 }
