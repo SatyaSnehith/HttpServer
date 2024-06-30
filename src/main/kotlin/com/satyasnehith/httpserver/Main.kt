@@ -8,10 +8,10 @@ suspend fun main(args: Array<String>) {
 
     val server = HttpServer()
 
-    GlobalScope.launch {
-        delay(5000)
-        server.stop()
-    }
+//    GlobalScope.launch {
+//        delay(5000)
+//        server.stop()
+//    }
 
     server.start()
 

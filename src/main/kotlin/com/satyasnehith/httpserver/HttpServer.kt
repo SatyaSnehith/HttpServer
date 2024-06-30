@@ -1,37 +1,31 @@
 package com.satyasnehith.httpserver
 
 import com.satyasnehith.httpserver.request.createRequest
-import kotlinx.coroutines.*
-import java.net.ServerSocket
+import java.io.InputStream
+import java.io.OutputStream
 
-class HttpServer {
-    val job = SupervisorJob()
-    val scope = CoroutineScope(Dispatchers.IO + job)
-    private var serverSocket: ServerSocket? = null
-    private val PORT = 1111
-    var isRunning = false
+class HttpServer: SocketServer() {
 
-    val handler = CoroutineExceptionHandler { _, exception ->
-        println("CoroutineExceptionHandler got $exception")
-    }
-    fun start() {
-        println("HttpServer start")
-
-        isRunning = true
-        serverSocket = ServerSocket(PORT)
-        while(isRunning) {
-            val socket = serverSocket!!.accept()
-            scope.launch {
-                val request = createRequest(socket.getInputStream())
-                println(request)
-            }
-        }
+    val blockedIpAddressAction = BlockedIpAddressAction.create {
+        println("BlockedIpAddressAction ip: " + it.inetAddress.hostAddress)
     }
 
-    fun stop() {
-        isRunning = false
-        scope.cancel()
-        job.cancel()
+    val newIpAddressAction = NewIpAddressAction.create {
+        println("NewIpAddressAction ip: " + it.inetAddress.hostAddress)
+    }
+
+    init {
+        socketLevelActions.add(blockedIpAddressAction)
+        socketLevelActions.add(newIpAddressAction)
+    }
+
+    override fun onRequest(inputStream: InputStream, outputStream: OutputStream) {
+        val request = createRequest(inputStream)
+        println(request)
+    }
+
+    fun blockIpAddress(ipAddress: String) {
+        blockedIpAddressAction.ipAddressSet.add(ipAddress)
     }
 
     companion object {
