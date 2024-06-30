@@ -6,7 +6,7 @@ import java.net.Socket
 import kotlin.jvm.Throws
 
 abstract class SocketServer: Server() {
-    val socketLevelActions: ArrayList<SocketLevelActions> = arrayListOf()
+    val socketLevelActions: ArrayList<SocketLevelAction> = arrayListOf()
 
     override fun onAccept(socket: Socket) {
         socketLevelActions.forEach {
@@ -16,14 +16,7 @@ abstract class SocketServer: Server() {
                 println("SocketServer action: " + e.message)
             }
         }
-        try {
-            onRequest(socket.getInputStream(), socket.getOutputStream())
-        } catch (e: Exception) {
-            println("SocketServer onRequest error: " + e.message)
-        }
     }
-
-    abstract fun onRequest(inputStream: InputStream, outputStream: OutputStream)
 
 
     companion object {
@@ -33,14 +26,14 @@ abstract class SocketServer: Server() {
     }
 }
 
-interface SocketLevelActions {
+interface SocketLevelAction {
 
     @Throws(Exception::class)
     fun action(socket: Socket)
 
 }
 
-abstract class NewIpAddressAction: SocketLevelActions {
+abstract class NewIpAddressAction: SocketLevelAction {
 
     private val ipAddressSet: HashSet<String> = hashSetOf()
 
@@ -66,7 +59,7 @@ abstract class NewIpAddressAction: SocketLevelActions {
     }
 }
 
-abstract class BlockedIpAddressAction: SocketLevelActions {
+abstract class BlockedIpAddressAction: SocketLevelAction {
 
     val ipAddressSet: HashSet<String> = hashSetOf()
 
@@ -89,4 +82,29 @@ abstract class BlockedIpAddressAction: SocketLevelActions {
     }
 
 }
+
+abstract class RequestResponseAction: SocketLevelAction {
+
+    override fun action(socket: Socket) {
+        try {
+            onRequest(socket.getInputStream(), socket.getOutputStream())
+        } catch (e: Exception) {
+            println("SocketServer onRequest error: " + e.message)
+        }
+    }
+
+    abstract fun onRequest(inputStream: InputStream, outputStream: OutputStream)
+
+    companion object {
+        fun create(
+            action: (InputStream, OutputStream) -> Unit
+        ) = object: RequestResponseAction() {
+            override fun onRequest(inputStream: InputStream, outputStream: OutputStream) {
+                action(inputStream, outputStream)
+            }
+        }
+    }
+}
+
+
 

@@ -1,8 +1,6 @@
 package com.satyasnehith.httpserver
 
 import com.satyasnehith.httpserver.request.createRequest
-import java.io.InputStream
-import java.io.OutputStream
 
 class HttpServer: SocketServer() {
 
@@ -14,14 +12,15 @@ class HttpServer: SocketServer() {
         println("NewIpAddressAction ip: " + it.inetAddress.hostAddress)
     }
 
+    val requestResponseAction = RequestResponseAction.create { inputStream, outputSream ->
+        val request = createRequest(inputStream)
+        println(request)
+    }
+
     init {
         socketLevelActions.add(blockedIpAddressAction)
         socketLevelActions.add(newIpAddressAction)
-    }
-
-    override fun onRequest(inputStream: InputStream, outputStream: OutputStream) {
-        val request = createRequest(inputStream)
-        println(request)
+        socketLevelActions.add(requestResponseAction)
     }
 
     fun blockIpAddress(ipAddress: String) {
