@@ -18,6 +18,10 @@ class Headers {
         }
     }
 
+    operator fun get(key: String): String? {
+        return values.getOrDefault(key, null)
+    }
+
     companion object {
         const val MaxAgeCache = "public, max-age=31536000"
         const val HourAgeCache = "max-age=3600"
