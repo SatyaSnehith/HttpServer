@@ -12,6 +12,8 @@ abstract class Server(
     private var serverSocket: ServerSocket? = null
     var isRunning = false
 
+    val socketLevelActions: ArrayList<SocketLevelAction> = arrayListOf()
+
     val handler = CoroutineExceptionHandler { _, exception ->
         println("CoroutineExceptionHandler got $exception")
     }
@@ -28,8 +30,15 @@ abstract class Server(
         }
     }
 
-    abstract fun onAccept(socket: Socket)
-
+    fun onAccept(socket: Socket) {
+        socketLevelActions.forEach {
+            try {
+                it.action(socket)
+            } catch (e: Exception) {
+                println("SocketServer action: " + e.message)
+            }
+        }
+    }
 
     fun stop() {
         isRunning = false

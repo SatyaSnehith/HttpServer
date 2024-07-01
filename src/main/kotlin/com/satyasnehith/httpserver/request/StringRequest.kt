@@ -14,6 +14,16 @@ class StringRequest(
     version,
     headers,
 ) {
+
+    constructor(request: Request, body: String):
+            this(
+                method = request.method,
+                path = request.path,
+                version = request.version,
+                headers = request.headers,
+                body = body
+            )
+
     override fun toString(): String {
         return super.toString() + "\n" + body
     }

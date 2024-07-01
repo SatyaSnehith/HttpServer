@@ -1,32 +1,14 @@
 package com.satyasnehith.httpserver
 
+import com.satyasnehith.httpserver.request.*
+import com.satyasnehith.httpserver.response.Response
+import com.satyasnehith.httpserver.response.send
 import java.io.InputStream
 import java.io.OutputStream
 import java.net.Socket
 import kotlin.jvm.Throws
 
-abstract class SocketServer: Server() {
-    val socketLevelActions: ArrayList<SocketLevelAction> = arrayListOf()
-
-    override fun onAccept(socket: Socket) {
-        socketLevelActions.forEach {
-            try {
-                it.action(socket)
-            } catch (e: Exception) {
-                println("SocketServer action: " + e.message)
-            }
-        }
-    }
-
-
-    companion object {
-        private const val VERSION = "HTTP/1.0"
-        private const val CRLF = "\r\n"
-        const val SERVER_NAME = "WebShare"
-    }
-}
-
-interface SocketLevelAction {
+fun interface SocketLevelAction {
 
     @Throws(Exception::class)
     fun action(socket: Socket)
@@ -106,5 +88,53 @@ abstract class RequestResponseAction: SocketLevelAction {
     }
 }
 
+
+abstract class HttpRequestResponseAction: SocketLevelAction {
+
+    override fun action(socket: Socket) {
+        val inputStream = socket.getInputStream()
+        val outputStream = socket.getOutputStream()
+
+        var request = try {
+            createRequest(inputStream)
+        } catch (e: Exception) {
+            throw Exception(e)
+        }
+
+        println("request.isPost: ${request.isPost}")
+        println("request.contentType: ${request.contentType}")
+
+        if (request.isPost) {
+            request = when(request.contentType) {
+                ContentType.JSON, ContentType.TEXT -> {
+                    val len = request.contentLength
+                    val body = if (len != null) {
+                        inputStream.readString(len)
+                    } else {
+                        inputStream.readAvailable()
+                    }
+                    StringRequest(request, body)
+                }
+                else -> {
+                    request
+                }
+            }
+        }
+
+        onRequest(request).send(outputStream)
+    }
+
+    abstract fun onRequest(request: Request): Response
+
+    companion object {
+        fun create(
+            action: (Request) -> Response
+        ) = object: HttpRequestResponseAction() {
+            override fun onRequest(request: Request): Response {
+                return action(request)
+            }
+        }
+    }
+}
 
 

@@ -1,11 +1,10 @@
 package com.satyasnehith.httpserver
 
 import com.satyasnehith.httpserver.file.IFile
-import com.satyasnehith.httpserver.request.createRequest
 import com.satyasnehith.httpserver.response.StringResponse
 import java.io.File
 
-class HttpServer: SocketServer() {
+class HttpServer: Server() {
 
     val fileCreatorInterface = FileCreatorInterface { name ->
         IFile.fromFile(File("/httpserverfiles/$name"))
@@ -19,27 +18,18 @@ class HttpServer: SocketServer() {
         println("NewIpAddressAction ip: " + it.inetAddress.hostAddress)
     }
 
-    val requestResponseAction = RequestResponseAction.create { inputStream, outputSream ->
-        val request = try {
-            createRequest(inputStream)
-        } catch (e: Exception) {
-        }
-        val resposne = StringResponse(200, "Hello World!")
-        outputSream.write(resposne.startLine.toByteArray())
-        outputSream.write(CRLF.toByteArray())
-        outputSream.write(resposne.body.toByteArray())
-        outputSream.write(CRLF.toByteArray())
-        outputSream.flush()
-        outputSream.close()
+    val httpRequestResponseAction = HttpRequestResponseAction.create { request ->
         println(request)
-        println()
-        println(resposne)
+        StringResponse(
+            statusCode = 200,
+            body = "Hello World!"
+        )
     }
 
     init {
         socketLevelActions.add(blockedIpAddressAction)
         socketLevelActions.add(newIpAddressAction)
-        socketLevelActions.add(requestResponseAction)
+        socketLevelActions.add(httpRequestResponseAction)
     }
 
     fun blockIpAddress(ipAddress: String) {

@@ -12,7 +12,12 @@ val Request.contentType: ContentType?
         return ContentType.entries.find { it.mime == mimeType }
     }
 
-val Request.contentLength: Long?
+val Request.contentLength: Int?
     get() {
-        return headers[Headers.ContentLength]?.toLongOrNull()
+        return headers[Headers.ContentLength]?.toIntOrNull()
+    }
+
+val Request.isPost: Boolean
+    get() {
+        return method == Method.POST.name
     }
