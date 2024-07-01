@@ -2,6 +2,7 @@ package com.satyasnehith.httpserver
 
 import com.satyasnehith.httpserver.request.*
 import com.satyasnehith.httpserver.response.Response
+import com.satyasnehith.httpserver.response.StringResponse
 import com.satyasnehith.httpserver.response.send
 import java.io.InputStream
 import java.io.OutputStream
@@ -91,6 +92,8 @@ abstract class RequestResponseAction: SocketLevelAction {
 
 abstract class HttpRequestResponseAction: SocketLevelAction {
 
+    val requestHandlers: ArrayList<RequestHandler> = ArrayList()
+
     override fun action(socket: Socket) {
         val inputStream = socket.getInputStream()
         val outputStream = socket.getOutputStream()
@@ -102,6 +105,7 @@ abstract class HttpRequestResponseAction: SocketLevelAction {
         }
 
         println("request.isPost: ${request.isPost}")
+
         println("request.contentType: ${request.contentType}")
 
         if (request.isPost) {
@@ -121,8 +125,57 @@ abstract class HttpRequestResponseAction: SocketLevelAction {
             }
         }
 
-        onRequest(request).send(outputStream)
+        println(request)
+
+        val requestHandler = requestHandlers.find {
+            it.path == request.path &&
+            it.method.name == request.method
+        }
+
+        val response = if (requestHandler != null) {
+            requestHandler.onRequest(request)
+        } else {
+            StringResponse(400, body = "Bad Request")
+        }
+
+        response.send(outputStream)
     }
+
+
+    fun get(
+        path: String,
+        respond: (Request) -> Response
+    ) {
+        addRequestHandler(
+            method = Method.GET,
+            path = path,
+            respond = respond
+        )
+    }
+
+    fun post(
+        path: String,
+        respond: (Request) -> Response
+    ) {
+        addRequestHandler(
+            method = Method.POST,
+            path = path,
+            respond = respond
+        )
+    }
+
+    private fun addRequestHandler(
+        method: Method,
+        path: String,
+        respond: (Request) -> Response
+    ) {
+        requestHandlers.add(object: RequestHandler(method, path) {
+            override fun onRequest(request: Request): Response {
+                return respond(request)
+            }
+        })
+    }
+
 
     abstract fun onRequest(request: Request): Response
 
@@ -137,4 +190,11 @@ abstract class HttpRequestResponseAction: SocketLevelAction {
     }
 }
 
+abstract class RequestHandler(
+    val method: Method,
+    val path: String
+) {
+    abstract fun onRequest(request: Request): Response
+
+}
 

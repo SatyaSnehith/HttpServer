@@ -5,7 +5,7 @@ import com.satyasnehith.httpserver.HttpServer
 
 open class Response(
     val statusCode: Int,
-    val headers: Headers
+    val headers: Headers = Headers()
 ) {
 
     val startLine: String

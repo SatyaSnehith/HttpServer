@@ -3,7 +3,7 @@ package com.satyasnehith.httpserver.response
 import com.satyasnehith.httpserver.Headers
 
 class StringResponse(
-    statusCode: Int,
+    statusCode: Int = 200,
     headers: Headers = Headers(),
     val body: String
 ): Response(

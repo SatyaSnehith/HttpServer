@@ -32,6 +32,12 @@ class HttpServer: Server() {
         socketLevelActions.add(httpRequestResponseAction)
     }
 
+    fun addRoutes(
+        routes: HttpRequestResponseAction.() -> Unit
+    ) {
+        httpRequestResponseAction.routes()
+    }
+
     fun blockIpAddress(ipAddress: String) {
         blockedIpAddressAction.ipAddressSet.add(ipAddress)
     }

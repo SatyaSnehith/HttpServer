@@ -1,18 +1,21 @@
 package com.satyasnehith.httpserver
 
-import kotlinx.coroutines.*
+import com.satyasnehith.httpserver.request.StringRequest
+import com.satyasnehith.httpserver.response.StringResponse
 
-@OptIn(DelicateCoroutinesApi::class)
-suspend fun main(args: Array<String>) {
+fun main(args: Array<String>) {
     println("HttpServer")
 
     val server = HttpServer()
 
-//    GlobalScope.launch {
-//        delay(5000)
-//        server.stop()
-//    }
-
+    server.addRoutes {
+        get("/") {
+            StringResponse(200, body = "Hello World! Get")
+        }
+        post("/") {
+            StringResponse(200, body = "Hello World! post ${(it as? StringRequest)?.body}")
+        }
+    }
     server.start()
 
 }
