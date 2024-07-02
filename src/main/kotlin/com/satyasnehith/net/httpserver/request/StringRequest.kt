@@ -6,7 +6,7 @@ class StringRequest(
     method: String,
     path: String,
     version: String,
-    headers: com.satyasnehith.net.httpserver.Headers,
+    headers: Headers,
     val body: String
 ): Request(
     method,

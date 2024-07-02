@@ -46,8 +46,7 @@ class HttpServer: Server() {
     }
 
     companion object {
-        const val VERSION = "HTTP/1.0"
-        const val CRLF = "\r\n"
+        const val VERSION = "HTTP/1.1"
         const val SERVER_NAME = "WebShare"
     }
 }

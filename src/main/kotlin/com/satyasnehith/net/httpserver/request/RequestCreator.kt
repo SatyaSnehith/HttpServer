@@ -1,7 +1,7 @@
 package com.satyasnehith.net.httpserver.request
 
 import com.satyasnehith.net.httpserver.Headers
-import java.io.IOException
+import com.satyasnehith.net.util.readLine
 import java.io.InputStream
 
 
@@ -19,7 +19,7 @@ fun createRequest(inputStream: InputStream): Request {
         throw Exception(rLine)
     }
 
-    val headers = com.satyasnehith.net.httpserver.Headers()
+    val headers = Headers()
 
     while (true) {
         val line = inputStream.readLine()
@@ -33,42 +33,4 @@ fun createRequest(inputStream: InputStream): Request {
         version = version,
         headers = headers
     )
-}
-
-@Throws(IOException::class)
-fun InputStream.readLine(): String {
-    val LF = '\n'.code
-    var count = 0
-    var len = 0
-    var data: ByteArray? = null
-    var b: Int
-    while (read().also { b = it } != -1 && b != LF) {
-        if (len == count) {
-            count = if (count != 0) 2 * len else 128
-            val expanded = ByteArray(count)
-            if (data != null) System.arraycopy(data, 0, expanded, 0, len)
-            data = expanded
-        }
-        data!![len++] = b.toByte()
-    }
-    return if (len > 0) String(data!!, 0, len - 1) else ""
-}
-
-@Throws(IOException::class)
-fun InputStream.readAvailable(): String {
-    return readString(available())
-}
-
-@Throws(IOException::class)
-fun InputStream.readString(count: Int): String {
-    var len = 0
-    val data = ByteArray(count)
-    var b: Int
-
-    repeat(count) {
-        b = read()
-        data[len++] = b.toByte()
-    }
-
-    return if (len > 0) String(data, 0, len) else ""
 }

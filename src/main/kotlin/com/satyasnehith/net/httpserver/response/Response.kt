@@ -5,15 +5,20 @@ import com.satyasnehith.net.httpserver.HttpServer
 
 open class Response(
     val statusCode: Int,
-    val headers: com.satyasnehith.net.httpserver.Headers = com.satyasnehith.net.httpserver.Headers()
+    val headers: Headers = Headers()
 ) {
 
+    constructor(response: Response): this(
+        statusCode = response.statusCode,
+        headers = response.headers
+    )
+
     val startLine: String
-        get() = "${HttpServer.VERSION} $statusCode ${StatusMessages[statusCode]}${HttpServer.CRLF}"
+        get() = "${HttpServer.VERSION} $statusCode ${StatusMessages[statusCode]}"
 
 
     override fun toString(): String {
-        return startLine
+        return startLine + '\n' + headers.toString()
     }
 
 }

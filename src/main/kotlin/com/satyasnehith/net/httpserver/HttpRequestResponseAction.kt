@@ -5,6 +5,8 @@ import com.satyasnehith.net.httpserver.request.*
 import com.satyasnehith.net.httpserver.response.Response
 import com.satyasnehith.net.httpserver.response.StringResponse
 import com.satyasnehith.net.httpserver.response.send
+import com.satyasnehith.net.util.readAvailable
+import com.satyasnehith.net.util.readString
 import java.net.Socket
 
 abstract class HttpRequestResponseAction: SocketLevelAction {
@@ -20,10 +22,6 @@ abstract class HttpRequestResponseAction: SocketLevelAction {
         } catch (e: Exception) {
             throw Exception(e)
         }
-
-        println("request.isPost: ${request.isPost}")
-
-        println("request.contentType: ${request.contentType}")
 
         if (request.isPost) {
             request = when(request.contentType) {
@@ -42,18 +40,24 @@ abstract class HttpRequestResponseAction: SocketLevelAction {
             }
         }
 
+        println("-".repeat(50))
         println(request)
 
         val requestHandler = requestHandlers.find {
             it.path == request.path &&
-            it.method.name == request.method
+            (it.method.name == request.method || request.isHead)
         }
 
-        val response = requestHandler?.onRequest(request) ?: StringResponse(
+        var response = requestHandler?.onRequest(request) ?: StringResponse(
             statusCode = 400,
-            body = "${request.path} not available with ${request.method} method"
+            body = "${request.path} does not exist with ${request.method} method"
         )
 
+        if (request.isHead) { // send only headers
+            response = Response(response)
+        }
+
+        println()
         println(response)
 
         response.send(outputStream)

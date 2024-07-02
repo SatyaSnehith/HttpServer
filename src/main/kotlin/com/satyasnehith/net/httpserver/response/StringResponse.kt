@@ -4,7 +4,7 @@ import com.satyasnehith.net.httpserver.Headers
 
 class StringResponse(
     statusCode: Int = 200,
-    headers: com.satyasnehith.net.httpserver.Headers = com.satyasnehith.net.httpserver.Headers(),
+    headers: Headers = Headers(),
     val body: String
 ): Response(
     statusCode,
@@ -12,7 +12,7 @@ class StringResponse(
 ) {
 
     init {
-        headers[com.satyasnehith.net.httpserver.Headers.ContentLength] = body.length.toString()
+        headers[Headers.ContentLength] = body.length.toString()
     }
 
     override fun toString(): String {

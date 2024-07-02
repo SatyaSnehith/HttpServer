@@ -6,7 +6,7 @@ open class Request(
     val method: String,
     val path: String,
     val version: String,
-    val headers: com.satyasnehith.net.httpserver.Headers,
+    val headers: Headers,
 ) {
 
     override fun toString(): String {

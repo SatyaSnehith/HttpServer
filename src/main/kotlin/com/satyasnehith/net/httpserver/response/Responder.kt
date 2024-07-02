@@ -1,18 +1,18 @@
 package com.satyasnehith.net.httpserver.response
 
-import com.satyasnehith.net.httpserver.HttpServer
+import com.satyasnehith.net.util.write
+import com.satyasnehith.net.util.writeCrlf
 import java.io.OutputStream
 
 fun Response.send(outputStream: OutputStream) {
-    outputStream.write(startLine.toByteArray())
-    for (header in headers) {
-        outputStream.write((header.key + ": " + header.value + HttpServer.CRLF).toByteArray())
+    outputStream.writeCrlf(startLine)
+    for (header in headers.lines()) {
+        outputStream.writeCrlf(header)
     }
-    outputStream.write(HttpServer.CRLF.toByteArray())
+    outputStream.writeCrlf()
     when(this) {
         is StringResponse -> {
-            outputStream.write(body.toByteArray())
-            outputStream.write(HttpServer.CRLF.toByteArray())
+            outputStream.write(body)
         }
     }
     outputStream.flush()

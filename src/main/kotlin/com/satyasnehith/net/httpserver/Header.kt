@@ -13,7 +13,7 @@ class Headers {
     }
 
     override fun toString(): String {
-        return values.toList().joinToString(com.satyasnehith.net.httpserver.HttpServer.Companion.CRLF) {
+        return values.toList().joinToString("\n") {
             "${it.first}: ${it.second}"
         }
     }
@@ -27,6 +27,18 @@ class Headers {
     }
 
     operator fun iterator() = values.iterator()
+
+    fun lines() = object: Iterator<String> {
+        val i = this@Headers.iterator()
+
+        override fun hasNext() = i.hasNext()
+
+        override fun next(): String {
+            val entry = i.next()
+            return "${entry.key}: ${entry.value}"
+        }
+
+    }
 
     companion object {
         const val MaxAgeCache = "public, max-age=31536000"

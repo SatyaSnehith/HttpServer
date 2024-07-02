@@ -7,7 +7,7 @@ class FileRequest(
     method: String,
     path: String,
     version: String,
-    headers: com.satyasnehith.net.httpserver.Headers,
+    headers: Headers,
     val body: IFile
 ): Request(
     method,
