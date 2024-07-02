@@ -19,13 +19,7 @@ fun createRequest(inputStream: InputStream): Request {
         throw Exception(rLine)
     }
 
-    val headers = Headers()
-
-    while (true) {
-        val line = inputStream.readLine()
-        if (line.isEmpty()) break
-        headers.add(line)
-    }
+    val headers = inputStream.readHeaders()
 
     return Request(
         method = method,
@@ -33,4 +27,16 @@ fun createRequest(inputStream: InputStream): Request {
         version = version,
         headers = headers
     )
+}
+
+
+fun InputStream.readHeaders(): Headers {
+    val headers = Headers()
+
+    while (true) {
+        val line = readLine()
+        if (line.isEmpty()) break
+        headers.add(line)
+    }
+    return headers
 }
