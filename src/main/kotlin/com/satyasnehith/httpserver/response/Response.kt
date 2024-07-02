@@ -9,7 +9,7 @@ open class Response(
 ) {
 
     val startLine: String
-        get() = "${HttpServer.VERSION} $statusCode ${StatusMessages[statusCode]} ${HttpServer.CRLF}"
+        get() = "${HttpServer.VERSION} $statusCode ${StatusMessages[statusCode]}${HttpServer.CRLF}"
 
 
     override fun toString(): String {

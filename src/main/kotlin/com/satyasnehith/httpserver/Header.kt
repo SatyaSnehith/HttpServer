@@ -13,14 +13,20 @@ class Headers {
     }
 
     override fun toString(): String {
-        return values.toList().joinToString("\n") {
+        return values.toList().joinToString(HttpServer.CRLF) {
             "${it.first}: ${it.second}"
         }
+    }
+
+    operator fun set(key: String, value: String) {
+        values[key] = value
     }
 
     operator fun get(key: String): String? {
         return values.getOrDefault(key, null)
     }
+
+    operator fun iterator() = values.iterator()
 
     companion object {
         const val MaxAgeCache = "public, max-age=31536000"

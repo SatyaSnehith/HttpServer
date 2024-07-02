@@ -132,11 +132,12 @@ abstract class HttpRequestResponseAction: SocketLevelAction {
             it.method.name == request.method
         }
 
-        val response = if (requestHandler != null) {
-            requestHandler.onRequest(request)
-        } else {
-            StringResponse(400, body = "Bad Request")
-        }
+        val response = requestHandler?.onRequest(request) ?: StringResponse(
+            statusCode = 400,
+            body = "${request.path} not available with ${request.method} method"
+        )
+
+        println(response)
 
         response.send(outputStream)
     }

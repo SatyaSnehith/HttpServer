@@ -5,6 +5,9 @@ import java.io.OutputStream
 
 fun Response.send(outputStream: OutputStream) {
     outputStream.write(startLine.toByteArray())
+    for (header in headers) {
+        outputStream.write((header.key + ": " + header.value + HttpServer.CRLF).toByteArray())
+    }
     outputStream.write(HttpServer.CRLF.toByteArray())
     when(this) {
         is StringResponse -> {
@@ -15,4 +18,3 @@ fun Response.send(outputStream: OutputStream) {
     outputStream.flush()
     outputStream.close()
 }
-

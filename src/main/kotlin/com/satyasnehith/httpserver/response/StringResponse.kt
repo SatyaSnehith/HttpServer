@@ -11,6 +11,10 @@ class StringResponse(
     headers
 ) {
 
+    init {
+        headers[Headers.ContentLength] = body.length.toString()
+    }
+
     override fun toString(): String {
         return super.toString() + "\n" + body
     }
