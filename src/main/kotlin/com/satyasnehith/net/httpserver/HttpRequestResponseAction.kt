@@ -1,98 +1,15 @@
-package com.satyasnehith.httpserver
+package com.satyasnehith.net.httpserver
 
-import com.satyasnehith.httpserver.request.*
-import com.satyasnehith.httpserver.response.Response
-import com.satyasnehith.httpserver.response.StringResponse
-import com.satyasnehith.httpserver.response.send
-import java.io.InputStream
-import java.io.OutputStream
+import com.satyasnehith.net.server.SocketLevelAction
+import com.satyasnehith.net.httpserver.request.*
+import com.satyasnehith.net.httpserver.response.Response
+import com.satyasnehith.net.httpserver.response.StringResponse
+import com.satyasnehith.net.httpserver.response.send
 import java.net.Socket
-import kotlin.jvm.Throws
-
-fun interface SocketLevelAction {
-
-    @Throws(Exception::class)
-    fun action(socket: Socket)
-
-}
-
-abstract class NewIpAddressAction: SocketLevelAction {
-
-    private val ipAddressSet: HashSet<String> = hashSetOf()
-
-    @Synchronized
-    override fun action(socket: Socket) {
-        val ipAddress = socket.inetAddress.hostAddress
-        if (!ipAddressSet.contains(ipAddress)) {
-            ipAddressSet.add(ipAddress)
-            onNewIpAddress(socket)
-        }
-    }
-
-    abstract fun onNewIpAddress(socket: Socket)
-
-    companion object {
-        fun create(
-            action: (Socket) -> Unit
-        ) = object: NewIpAddressAction() {
-            override fun onNewIpAddress(socket: Socket) {
-                action(socket)
-            }
-        }
-    }
-}
-
-abstract class BlockedIpAddressAction: SocketLevelAction {
-
-    val ipAddressSet: HashSet<String> = hashSetOf()
-
-    @Throws(Exception::class)
-    override fun action(socket: Socket) {
-        val ipAddress = socket.inetAddress.hostAddress
-        if(ipAddressSet.contains(ipAddress)) socket.close()
-    }
-
-    abstract fun onBlockedIpAddressAccess(socket: Socket)
-
-    companion object {
-        fun create(
-            action: (Socket) -> Unit
-        ) = object: BlockedIpAddressAction() {
-            override fun onBlockedIpAddressAccess(socket: Socket) {
-                action(socket)
-            }
-        }
-    }
-
-}
-
-abstract class RequestResponseAction: SocketLevelAction {
-
-    override fun action(socket: Socket) {
-        try {
-            onRequest(socket.getInputStream(), socket.getOutputStream())
-        } catch (e: Exception) {
-            println("SocketServer onRequest error: " + e.message)
-        }
-    }
-
-    abstract fun onRequest(inputStream: InputStream, outputStream: OutputStream)
-
-    companion object {
-        fun create(
-            action: (InputStream, OutputStream) -> Unit
-        ) = object: RequestResponseAction() {
-            override fun onRequest(inputStream: InputStream, outputStream: OutputStream) {
-                action(inputStream, outputStream)
-            }
-        }
-    }
-}
-
 
 abstract class HttpRequestResponseAction: SocketLevelAction {
 
-    val requestHandlers: ArrayList<RequestHandler> = ArrayList()
+    private val requestHandlers: ArrayList<RequestHandler> = ArrayList()
 
     override fun action(socket: Socket) {
         val inputStream = socket.getInputStream()
@@ -198,4 +115,3 @@ abstract class RequestHandler(
     abstract fun onRequest(request: Request): Response
 
 }
-

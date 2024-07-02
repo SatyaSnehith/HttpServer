@@ -1,4 +1,4 @@
-package com.satyasnehith.httpserver.file
+package com.satyasnehith.net.httpserver.file
 
 import java.io.File
 import java.io.InputStream

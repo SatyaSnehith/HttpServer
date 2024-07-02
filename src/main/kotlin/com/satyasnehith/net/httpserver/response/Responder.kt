@@ -1,6 +1,6 @@
-package com.satyasnehith.httpserver.response
+package com.satyasnehith.net.httpserver.response
 
-import com.satyasnehith.httpserver.HttpServer
+import com.satyasnehith.net.httpserver.HttpServer
 import java.io.OutputStream
 
 fun Response.send(outputStream: OutputStream) {

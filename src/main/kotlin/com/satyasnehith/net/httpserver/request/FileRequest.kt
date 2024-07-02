@@ -1,13 +1,13 @@
-package com.satyasnehith.httpserver.request
+package com.satyasnehith.net.httpserver.request
 
-import com.satyasnehith.httpserver.Headers
-import com.satyasnehith.httpserver.file.IFile
+import com.satyasnehith.net.httpserver.Headers
+import com.satyasnehith.net.httpserver.file.IFile
 
 class FileRequest(
     method: String,
     path: String,
     version: String,
-    headers: Headers,
+    headers: com.satyasnehith.net.httpserver.Headers,
     val body: IFile
 ): Request(
     method,

@@ -1,4 +1,4 @@
-package com.satyasnehith.httpserver.request
+package com.satyasnehith.net.httpserver.request
 
 enum class Method {
     GET, POST, PATCH, DELETE

@@ -1,12 +1,12 @@
-package com.satyasnehith.httpserver.request
+package com.satyasnehith.net.httpserver.request
 
-import com.satyasnehith.httpserver.Headers
+import com.satyasnehith.net.httpserver.Headers
 
 class StringRequest(
     method: String,
     path: String,
     version: String,
-    headers: Headers,
+    headers: com.satyasnehith.net.httpserver.Headers,
     val body: String
 ): Request(
     method,

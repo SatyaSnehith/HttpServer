@@ -1,4 +1,4 @@
-package com.satyasnehith.httpserver.response
+package com.satyasnehith.net.httpserver.response
 
 object StatusMessages: ArrayList<String?>() {
 

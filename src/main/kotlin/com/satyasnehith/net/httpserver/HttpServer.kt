@@ -1,12 +1,15 @@
-package com.satyasnehith.httpserver
+package com.satyasnehith.net.httpserver
 
-import com.satyasnehith.httpserver.file.IFile
-import com.satyasnehith.httpserver.response.StringResponse
+import com.satyasnehith.net.server.action.BlockedIpAddressAction
+import com.satyasnehith.net.server.action.NewIpAddressAction
+import com.satyasnehith.net.server.Server
+import com.satyasnehith.net.httpserver.file.IFile
+import com.satyasnehith.net.httpserver.response.StringResponse
 import java.io.File
 
 class HttpServer: Server() {
 
-    val fileCreatorInterface = FileCreatorInterface { name ->
+    val fileCreatorInterface = com.satyasnehith.net.httpserver.FileCreatorInterface { name ->
         IFile.fromFile(File("/httpserverfiles/$name"))
     }
 

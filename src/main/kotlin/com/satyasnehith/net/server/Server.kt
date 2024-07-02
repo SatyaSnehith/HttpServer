@@ -1,4 +1,4 @@
-package com.satyasnehith.httpserver
+package com.satyasnehith.net.server
 
 import kotlinx.coroutines.*
 import java.net.ServerSocket

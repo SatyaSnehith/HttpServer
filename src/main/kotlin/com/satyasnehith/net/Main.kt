@@ -1,7 +1,8 @@
-package com.satyasnehith.httpserver
+package com.satyasnehith.net
 
-import com.satyasnehith.httpserver.request.StringRequest
-import com.satyasnehith.httpserver.response.StringResponse
+import com.satyasnehith.net.httpserver.HttpServer
+import com.satyasnehith.net.httpserver.request.StringRequest
+import com.satyasnehith.net.httpserver.response.StringResponse
 
 fun main(args: Array<String>) {
     println("HttpServer")

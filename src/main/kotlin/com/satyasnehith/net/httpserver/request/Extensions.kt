@@ -1,11 +1,10 @@
-package com.satyasnehith.httpserver.request
+package com.satyasnehith.net.httpserver.request
 
-import com.satyasnehith.httpserver.Headers
-import com.satyasnehith.httpserver.splitAndTrim
+import com.satyasnehith.net.util.splitAndTrim
 
 val Request.contentType: ContentType?
     get() {
-        val contentTypeValue = headers[Headers.ContentType] ?: return null
+        val contentTypeValue = headers[com.satyasnehith.net.httpserver.Headers.ContentType] ?: return null
         val parts = contentTypeValue.splitAndTrim(';')
         if (parts.isEmpty()) return null
         val mimeType = parts[0]
@@ -14,7 +13,7 @@ val Request.contentType: ContentType?
 
 val Request.contentLength: Int?
     get() {
-        return headers[Headers.ContentLength]?.toIntOrNull()
+        return headers[com.satyasnehith.net.httpserver.Headers.ContentLength]?.toIntOrNull()
     }
 
 val Request.isPost: Boolean

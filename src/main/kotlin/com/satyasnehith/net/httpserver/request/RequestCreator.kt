@@ -1,6 +1,6 @@
-package com.satyasnehith.httpserver.request
+package com.satyasnehith.net.httpserver.request
 
-import com.satyasnehith.httpserver.Headers
+import com.satyasnehith.net.httpserver.Headers
 import java.io.IOException
 import java.io.InputStream
 
@@ -19,7 +19,7 @@ fun createRequest(inputStream: InputStream): Request {
         throw Exception(rLine)
     }
 
-    val headers = Headers()
+    val headers = com.satyasnehith.net.httpserver.Headers()
 
     while (true) {
         val line = inputStream.readLine()

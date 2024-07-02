@@ -1,4 +1,4 @@
-package com.satyasnehith.httpserver
+package com.satyasnehith.net.server
 
 import java.net.Socket
 

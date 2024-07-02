@@ -28,5 +28,5 @@ tasks.withType<KotlinCompile> {
 }
 
 application {
-    mainClass.set("com.satyasnehith.httpserver.MainKt")
+    mainClass.set("com.satyasnehith.net.MainKt")
 }

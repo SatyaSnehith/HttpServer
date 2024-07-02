@@ -1,4 +1,4 @@
-package com.satyasnehith.httpserver
+package com.satyasnehith.net.httpserver
 
 class Headers {
 
@@ -13,7 +13,7 @@ class Headers {
     }
 
     override fun toString(): String {
-        return values.toList().joinToString(HttpServer.CRLF) {
+        return values.toList().joinToString(com.satyasnehith.net.httpserver.HttpServer.Companion.CRLF) {
             "${it.first}: ${it.second}"
         }
     }
