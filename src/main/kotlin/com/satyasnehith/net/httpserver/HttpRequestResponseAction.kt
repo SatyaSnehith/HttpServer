@@ -6,9 +6,12 @@ import com.satyasnehith.net.httpserver.request.*
 import com.satyasnehith.net.httpserver.response.Response
 import com.satyasnehith.net.httpserver.response.StringResponse
 import com.satyasnehith.net.httpserver.response.send
+import com.satyasnehith.net.httpserver.util.IOUtil
+import com.satyasnehith.net.util.CRLF
 import com.satyasnehith.net.util.readAvailable
 import com.satyasnehith.net.util.readLine
 import com.satyasnehith.net.util.readString
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.InputStream
 import java.net.Socket
@@ -19,8 +22,15 @@ class HttpRequestResponseAction: SocketLevelAction {
     private val requestHandlers: ArrayList<RequestHandler> = ArrayList()
 
     val fileCreatorInterface = com.satyasnehith.net.httpserver.FileCreatorInterface { name ->
-        IFile.fromFile(File("/httpserverfiles/$name"))
+        val dir = File("/home/satya/Documents/LocalServerUploads")
+        if (!dir.exists()) dir.mkdirs()
+        val file = File(dir, name)
+        file.createNewFile()
+        println("FILE ${file.absolutePath}")
+        IFile.fromFile(file)
     }
+
+    val fileReceiver = FileReceiver()
 
     override fun action(socket: Socket) {
         val inputStream = socket.getInputStream()
@@ -36,9 +46,6 @@ class HttpRequestResponseAction: SocketLevelAction {
             return
         }
 
-        println("-".repeat(50))
-        println(request)
-
         val requestHandler = requestHandlers.find {
             it.path == request.path &&
             (it.method.name == request.method || request.isHead)
@@ -53,10 +60,12 @@ class HttpRequestResponseAction: SocketLevelAction {
             response = Response(response)
         }
 
+        response.send(outputStream)
+
+        println("-".repeat(50))
+        println(request)
         println()
         println(response)
-
-        response.send(outputStream)
     }
 
 
@@ -77,16 +86,41 @@ class HttpRequestResponseAction: SocketLevelAction {
                     }
                     StringRequest(request, body)
                 }
-                ContentType.FORM -> {
+                ContentType.MULTI_PART -> {
                     val boundary = headers.boundary
                     val line = inputStream.readLine()
                     if (line == boundary) {
-                        val formHeaders = inputStream.readHeaders()
-                        val contentDisposition = formHeaders
-                            .contentDisposition ?: throw Exception("Incorrect ${Headers.ContentDisposition} ${formHeaders[Headers.ContentDisposition]}")
-
-                    }
-                    FileRequest(request, fileCreatorInterface.onCreateFile(""))
+                        val formDataList = ArrayList<FormData>()
+                        var continueReading = true
+                        var index = 0
+                        while(continueReading) {
+                            val formHeaders = inputStream.readHeaders()
+                            val contentDisposition = formHeaders
+                                .contentDisposition ?: throw Exception("Incorrect ${Headers.ContentDisposition} -> ${formHeaders[Headers.ContentDisposition]}")
+                            val fileName = contentDisposition.fileName
+                            val name = contentDisposition.name.ifEmpty { index.toString() }
+                            var formData: FormData = if (!fileName.isNullOrBlank()) {
+                                val file = fileCreatorInterface.onCreateFile(fileName)
+                                continueReading = !fileReceiver.receive(
+                                    inputStream = inputStream,
+                                    outputStream = file.outputStream(),
+                                    boundary = CRLF + boundary
+                                )
+                                FormData.FileFormData(name, file)
+                            } else {
+                                val byteArrayOutputStream = ByteArrayOutputStream()
+                                continueReading = !IOUtil.receiveFormData(
+                                    inputStream = inputStream,
+                                    outputStream = byteArrayOutputStream,
+                                    boundary = CRLF + boundary
+                                )
+                                FormData.StringFormData(name, byteArrayOutputStream.toString())
+                            }
+                            formDataList.add(formData)
+                            index++
+                        }
+                        MultipartRequest(request, formDataList)
+                    } else throw Exception("Not a boundary $line")
                 }
                 else -> {
                     request

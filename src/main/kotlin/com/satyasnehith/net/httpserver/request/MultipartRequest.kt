@@ -1,14 +1,13 @@
 package com.satyasnehith.net.httpserver.request
 
 import com.satyasnehith.net.httpserver.Headers
-import com.satyasnehith.net.httpserver.file.IFile
 
-class FileRequest(
+class MultipartRequest (
     method: String,
     path: String,
     version: String,
     headers: Headers,
-    vararg val body: IFile
+    val body: List<FormData>
 ): Request(
     method,
     path,
@@ -16,7 +15,7 @@ class FileRequest(
     headers,
 ) {
 
-    constructor(request: Request, vararg body: IFile):
+    constructor(request: Request, body: List<FormData>):
             this(
                 method = request.method,
                 path = request.path,
@@ -26,7 +25,7 @@ class FileRequest(
             )
 
     override fun toString(): String {
-        return super.toString() + "\n" + body.joinToString("\n")
+        return super.toString() + "\n--${ContentType.MULTI_PART}\n" + body.joinToString("\n")
     }
 
 }

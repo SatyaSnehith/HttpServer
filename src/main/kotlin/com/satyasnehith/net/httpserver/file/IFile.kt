@@ -12,6 +12,10 @@ abstract class IFile(
 
     abstract fun inputStream(): InputStream
 
+    override fun toString(): String {
+        return "[fileName: $name]"
+    }
+
     companion object {
         fun fromFile(file: File): IFile {
             return object: IFile(file.name) {
