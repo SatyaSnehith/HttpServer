@@ -20,10 +20,10 @@ class SharerClient: Service() {
         val connectRequest = ConnectRequest()
         val connectRequestJson = json.encodeToString(connectRequest)
         outputStream.writeCrlf(connectRequestJson)
-        println("SENT: ConnectRequest -> $connectRequest")
+        println("SENT: ConnectRequest -> $connectRequestJson")
         val connectResponseJson = inputStream.readLine()
         val connectResponse = json.decodeFromString<ConnectResponse>(connectResponseJson)
-        println("RECEIVED: ConnectResponse -> $connectResponse")
+        println("RECEIVED: ConnectResponse -> $connectResponseJson")
 
     }
 
