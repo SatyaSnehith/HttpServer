@@ -29,12 +29,12 @@ class SharerRequestResponseAction: SocketLevelAction {
                 outputStream.writeCrlf(json.encodeToString(BadMessage(e.message ?: "wrong json format")))
                 return
             }
-        println("RECEIVED: ConnectRequest -> $connectRequest")
+        println("RECEIVED: ConnectRequest -> $connectRequestJson")
         if (password.equals(connectRequest.password)) {
             val connectResponse = ConnectResponse()
             val connectResponseJson = json.encodeToString(connectResponse)
             outputStream.writeCrlf(connectResponseJson)
-            println("SENT: ConnectResponse -> $connectResponse")
+            println("SENT: ConnectResponse -> $connectResponseJson")
 
         }
     }

@@ -13,7 +13,8 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 fun main(args: Array<String>) {
-    startServer()
+//    startServer()
+    startSharerServer()
 }
 
 fun startServer() {

@@ -28,6 +28,11 @@ class HttpServer: Server() {
         httpRequestResponseAction.routes()
     }
 
+    override fun start() {
+        super.start()
+        println("HttpServer start")
+    }
+
     fun blockIpAddress(ipAddress: String) {
         blockedIpAddressAction.ipAddressSet.add(ipAddress)
     }
