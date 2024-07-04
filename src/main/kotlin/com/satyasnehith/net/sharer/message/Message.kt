@@ -4,11 +4,18 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-open class Message(
+abstract class Message(
     @SerialName("t")
     val type: String,
     @SerialName("e")
-    val error: String? = null,
+    open val error: String? = null,
+)
+
+@Serializable
+class BadMessage(
+    override val error: String,
+): Message(
+    type = "bm",
 )
 
 @Serializable

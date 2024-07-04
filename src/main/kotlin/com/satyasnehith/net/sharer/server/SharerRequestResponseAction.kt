@@ -6,6 +6,7 @@ import com.satyasnehith.net.sharer.json
 import com.satyasnehith.net.sharer.message.BadMessage
 import com.satyasnehith.net.sharer.message.ConnectRequest
 import com.satyasnehith.net.sharer.message.ConnectResponse
+import com.satyasnehith.net.sharer.message.DisconnectionReason
 import com.satyasnehith.net.util.readLine
 import com.satyasnehith.net.util.writeCrlf
 import kotlinx.serialization.encodeToString
@@ -26,17 +27,21 @@ class SharerRequestResponseAction: SocketLevelAction {
             try {
                 json.decodeFromString<ConnectRequest>(connectRequestJson)
             } catch (e: Exception) {
-                outputStream.writeCrlf(json.encodeToString(BadMessage(e.message ?: "wrong json format")))
+                println(e.message)
+                outputStream.writeCrlf(json.encodeToString(BadMessage("wrong json format")))
                 return
             }
         println("RECEIVED: ConnectRequest -> $connectRequestJson")
-        if (password.equals(connectRequest.password)) {
-            val connectResponse = ConnectResponse()
-            val connectResponseJson = json.encodeToString(connectResponse)
-            outputStream.writeCrlf(connectResponseJson)
-            println("SENT: ConnectResponse -> $connectResponseJson")
-
+        val connectResponse = if (password.equals(connectRequest.password)) {
+            ConnectResponse()
+        } else {
+            ConnectResponse(
+                reason = DisconnectionReason.INCORRECT
+            )
         }
+        val connectResponseJson = json.encodeToString(connectResponse)
+        outputStream.writeCrlf(connectResponseJson)
+        println("SENT: ConnectResponse -> $connectResponseJson")
     }
 
 }
