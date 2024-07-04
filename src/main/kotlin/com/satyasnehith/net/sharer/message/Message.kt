@@ -4,25 +4,26 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-abstract class Message(
+open class Message(
     @SerialName("t")
     val type: String,
     @SerialName("e")
-    open val error: String? = null,
-)
+    val error: String? = null
+) {
+    companion object {
+        fun badMessage(error: String) = Message(
+            type = "bm",
+            error = error
+        )
+    }
+}
 
-@Serializable
-class BadMessage(
-    override val error: String,
-): Message(
-    type = "bm",
-)
+
 
 @Serializable
 class ConnectRequest(
     @SerialName("p")
     val password: String = "1111",
-    val s: String = "1111",
 ): Message(
     type = "cr",
 )

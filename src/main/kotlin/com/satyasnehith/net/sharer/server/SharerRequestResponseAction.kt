@@ -3,10 +3,7 @@ package com.satyasnehith.net.sharer.server
 import com.satyasnehith.net.server.SocketLevelAction
 import com.satyasnehith.net.sharer.Password
 import com.satyasnehith.net.sharer.json
-import com.satyasnehith.net.sharer.message.BadMessage
-import com.satyasnehith.net.sharer.message.ConnectRequest
-import com.satyasnehith.net.sharer.message.ConnectResponse
-import com.satyasnehith.net.sharer.message.DisconnectionReason
+import com.satyasnehith.net.sharer.message.*
 import com.satyasnehith.net.util.readLine
 import com.satyasnehith.net.util.writeCrlf
 import kotlinx.serialization.encodeToString
@@ -28,7 +25,7 @@ class SharerRequestResponseAction: SocketLevelAction {
                 json.decodeFromString<ConnectRequest>(connectRequestJson)
             } catch (e: Exception) {
                 println(e.message)
-                outputStream.writeCrlf(json.encodeToString(BadMessage("wrong json format")))
+                outputStream.writeCrlf(json.encodeToString(Message.badMessage("wrong json format")))
                 return
             }
         println("RECEIVED: ConnectRequest -> $connectRequestJson")
