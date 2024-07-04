@@ -7,6 +7,7 @@ import com.satyasnehith.net.httpserver.response.Response
 import com.satyasnehith.net.httpserver.response.StringResponse
 import com.satyasnehith.net.httpserver.response.send
 import com.satyasnehith.net.httpserver.util.IOUtil
+import com.satyasnehith.net.httpserver.util.Logger
 import com.satyasnehith.net.util.CRLF
 import com.satyasnehith.net.util.readAvailable
 import com.satyasnehith.net.util.readLine
@@ -26,7 +27,7 @@ class HttpRequestResponseAction: SocketLevelAction {
         if (!dir.exists()) dir.mkdirs()
         val file = File(dir, name)
         file.createNewFile()
-        println("FILE ${file.absolutePath}")
+//        println("FILE ${file.absolutePath}")
         IFile.fromFile(file)
     }
 
@@ -64,16 +65,14 @@ class HttpRequestResponseAction: SocketLevelAction {
 
         outputStream.send(response)
 
-        println("-".repeat(50))
-        println(request)
-        println()
-        println(response)
     }
 
 
     @Throws(Exception::class)
     fun receiveRequest(inputStream: InputStream): Request {
         var request = createRequest(inputStream)
+        Logger.divider("START")
+        Logger.request(request)
 
         val headers = request.headers
 
@@ -86,41 +85,56 @@ class HttpRequestResponseAction: SocketLevelAction {
                     } else {
                         inputStream.readAvailable()
                     }
+                    Logger.line(body)
                     StringRequest(request, body)
                 }
                 ContentType.MULTI_PART -> {
                     val boundary = headers.boundary
                     val line = inputStream.readLine()
+                    Logger.line(line)
                     if (line == boundary) {
                         val formDataList = ArrayList<FormData>()
                         var continueReading = true
                         var index = 0
                         while(continueReading) {
                             val formHeaders = inputStream.readHeaders()
-                            val contentDisposition = formHeaders
-                                .contentDisposition ?: throw Exception("Incorrect ${Headers.ContentDisposition} -> ${formHeaders[Headers.ContentDisposition]}")
+                            Logger.headers(formHeaders)
+                            val contentDisposition = formHeaders.contentDisposition
+                                ?: throw Exception(
+                                    "Incorrect ${Headers.ContentDisposition} -> ${formHeaders[Headers.ContentDisposition]}"
+                                )
                             val fileName = contentDisposition.fileName
                             val name = contentDisposition.name.ifEmpty { index.toString() }
-                            var formData: FormData = if (!fileName.isNullOrBlank()) {
+                            val formData: FormData = if (!fileName.isNullOrBlank()) {
                                 val file = fileCreatorInterface.onCreateFile(fileName)
-                                continueReading = !fileReceiver.receive(
+                                val fileFormDataInfo = fileReceiver.receive(
                                     inputStream = inputStream,
                                     outputStream = file.outputStream(),
                                     boundary = CRLF + boundary
                                 )
+                                continueReading = !(fileFormDataInfo.isLastFormDate)
+                                Logger.line("[file=${fileFormDataInfo.length}]")
                                 FormData.FileFormData(name, file)
                             } else {
                                 val byteArrayOutputStream = ByteArrayOutputStream()
-                                continueReading = !IOUtil.receiveFormData(
+                                val formDataInfo = IOUtil.receiveFormData(
                                     inputStream = inputStream,
                                     outputStream = byteArrayOutputStream,
                                     boundary = CRLF + boundary
                                 )
-                                FormData.StringFormData(name, byteArrayOutputStream.toString())
+                                val data = byteArrayOutputStream.toString()
+                                continueReading = !(formDataInfo.isLastFormDate)
+                                Logger.line(data)
+                                FormData.StringFormData(name, data)
+                            }
+                            if (continueReading) {
+                                Logger.line(boundary)
                             }
                             formDataList.add(formData)
                             index++
                         }
+                        Logger.line("$boundary--")
+                        Logger.divider("END")
                         MultipartRequest(request, formDataList)
                     } else throw Exception("Not a boundary $line")
                 }

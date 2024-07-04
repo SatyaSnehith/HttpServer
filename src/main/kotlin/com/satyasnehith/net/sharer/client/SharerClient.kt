@@ -18,7 +18,7 @@ class SharerClient(
     private lateinit var socket: Socket
     private lateinit var outputStream: OutputStream
     private lateinit var inputStream: InputStream
-    private lateinit var password: String
+    private var password: String = ""
 
     fun start(
         password: String

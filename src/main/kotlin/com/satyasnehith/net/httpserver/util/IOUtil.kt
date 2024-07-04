@@ -1,11 +1,12 @@
 package com.satyasnehith.net.httpserver.util
 
+import com.satyasnehith.net.httpserver.request.FormDataInfo
 import java.io.InputStream
 import java.io.OutputStream
 
 object IOUtil {
 
-    fun receiveFormData(inputStream: InputStream, outputStream: OutputStream, boundary: String): Boolean {
+    fun receiveFormData(inputStream: InputStream, outputStream: OutputStream, boundary: String): FormDataInfo {
         val boundaryBytes = boundary.toByteArray()
         var foundBoundaryIndex = 0
         val suspectedBoundary = ArrayList<Byte>()
@@ -13,14 +14,16 @@ object IOUtil {
         var readCount = 1
         while(read >= 0) {
             val byte = read.toByte()
-            readCount++
             if (byte == boundaryBytes[foundBoundaryIndex]) {
                 suspectedBoundary.add(byte)
                 foundBoundaryIndex++
                 if (foundBoundaryIndex == boundaryBytes.size) {
                     val r1 = inputStream.read().toByte()
                     val r2 = inputStream.read().toByte()
-                    return arrayOf(r1, r2).toByteArray().contentEquals("--".toByteArray()) // the last boundary will have extra "--"
+                    return FormDataInfo(
+                        length = readCount - boundaryBytes.size,
+                        isLastFormDate = arrayOf(r1, r2).toByteArray().contentEquals("--".toByteArray()) // the last boundary will have extra "--"
+                    )
                 }
             } else {
                 foundBoundaryIndex = 0
@@ -29,8 +32,12 @@ object IOUtil {
                 outputStream.write(read)
             }
             read = inputStream.read()
+            readCount++
         }
-        return false
+        return FormDataInfo(
+            length = readCount,
+            isLastFormDate = false
+        )
     }
 
 }
