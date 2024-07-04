@@ -18,7 +18,6 @@ abstract class Server(
 
     override fun start() {
         super.start()
-        println("HttpServer start")
         serverSocket = ServerSocket(port)
         while(isRunning) {
             val socket = serverSocket!!.accept()
