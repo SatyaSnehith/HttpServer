@@ -4,17 +4,17 @@ import com.satyasnehith.net.util.write
 import com.satyasnehith.net.util.writeCrlf
 import java.io.OutputStream
 
-fun Response.send(outputStream: OutputStream) {
-    outputStream.writeCrlf(startLine)
-    for (header in headers.lines()) {
-        outputStream.writeCrlf(header)
+fun OutputStream.send(response: Response) {
+    writeCrlf(response.startLine)
+    for (header in response.headers.lines()) {
+        writeCrlf(header)
     }
-    outputStream.writeCrlf()
-    when(this) {
+    writeCrlf()
+    when(response) {
         is StringResponse -> {
-            outputStream.write(body)
+            write(response.body)
         }
     }
-    outputStream.flush()
-    outputStream.close()
+    flush()
+    close()
 }

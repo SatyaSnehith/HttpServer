@@ -30,9 +30,12 @@ class SharerRequestResponseAction: SocketLevelAction {
             }
         println("RECEIVED: ConnectRequest -> $connectRequestJson")
         val connectResponse = if (password.equals(connectRequest.password)) {
-            ConnectResponse()
+            ConnectResponse(
+                status = ConnectionStatus.CONNECTED
+            )
         } else {
             ConnectResponse(
+                status = ConnectionStatus.NOT_CONNECTED,
                 reason = DisconnectionReason.INCORRECT
             )
         }

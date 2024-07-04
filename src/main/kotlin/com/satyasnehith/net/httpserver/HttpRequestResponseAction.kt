@@ -39,10 +39,12 @@ class HttpRequestResponseAction: SocketLevelAction {
         val request = try {
             receiveRequest(inputStream)
         } catch (e: Exception) {
-            StringResponse(
-                statusCode = 400,
-                body = "Bad Request\n${e.message}"
-            ).send(outputStream)
+            outputStream.send(
+                StringResponse(
+                    statusCode = 400,
+                    body = "Bad Request\n${e.message}"
+                )
+            )
             return
         }
 
@@ -60,7 +62,7 @@ class HttpRequestResponseAction: SocketLevelAction {
             response = Response(response)
         }
 
-        response.send(outputStream)
+        outputStream.send(response)
 
         println("-".repeat(50))
         println(request)
