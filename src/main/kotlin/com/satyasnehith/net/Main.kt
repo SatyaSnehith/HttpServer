@@ -6,7 +6,6 @@ import com.satyasnehith.net.httpserver.request.StringRequest
 import com.satyasnehith.net.httpserver.response.StringResponse
 import com.satyasnehith.net.sharer.message.ConnectRequest
 import com.satyasnehith.net.sharer.message.ConnectResponse
-import com.satyasnehith.net.sharer.message.DisconnectionReason
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
