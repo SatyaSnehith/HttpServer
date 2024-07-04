@@ -14,7 +14,7 @@ class HttpServer: Server() {
         println("NewIpAddressAction ip: " + it.inetAddress.hostAddress)
     }
 
-    val httpRequestResponseAction = HttpRequestResponseAction()
+    private val httpRequestResponseAction = HttpRequestResponseAction()
 
     init {
         socketLevelActions.add(blockedIpAddressAction)

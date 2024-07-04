@@ -4,9 +4,22 @@ import com.satyasnehith.net.httpserver.HttpServer
 import com.satyasnehith.net.httpserver.request.MultipartRequest
 import com.satyasnehith.net.httpserver.request.StringRequest
 import com.satyasnehith.net.httpserver.response.StringResponse
+import com.satyasnehith.net.sharer.message.ConnectRequest
+import com.satyasnehith.net.sharer.message.ConnectResponse
+import com.satyasnehith.net.sharer.message.DisconnectionReason
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 fun main(args: Array<String>) {
     println("HttpServer")
+    val json = Json {
+        encodeDefaults = true
+        explicitNulls = false
+    }
+    println("ConnectRequest ${json.encodeToString(ConnectRequest())}")
+    val s = json.encodeToString(ConnectResponse())
+    println("ConnectResponse $s")
+    println("ConnectResponse ${json. decodeFromString<ConnectResponse>(s).reason}")
     startServer()
 //    testByteSearch()
 }
