@@ -7,21 +7,15 @@ import kotlinx.serialization.Serializable
 open class Message(
     @SerialName("t")
     val type: String,
-)
-
-@Serializable
-open class BadMessage(
     @SerialName("e")
-    val error: String,
-): Message(
-    type = "bm"
+    val error: String? = null,
 )
-
 
 @Serializable
 class ConnectRequest(
     @SerialName("p")
     val password: String = "1111",
+    val s: String = "1111",
 ): Message(
     type = "cr",
 )
