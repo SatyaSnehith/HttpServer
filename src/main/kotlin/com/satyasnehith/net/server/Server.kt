@@ -1,16 +1,14 @@
 package com.satyasnehith.net.server
 
+import com.satyasnehith.net.Service
 import kotlinx.coroutines.*
 import java.net.ServerSocket
 import java.net.Socket
 
 abstract class Server(
     private val port: Int = 1111
-) {
-    val job = SupervisorJob()
-    val scope = CoroutineScope(Dispatchers.IO + job)
+): Service() {
     private var serverSocket: ServerSocket? = null
-    var isRunning = false
 
     protected val socketLevelActions: ArrayList<SocketLevelAction> = arrayListOf()
 
@@ -18,9 +16,9 @@ abstract class Server(
         println("CoroutineExceptionHandler got $exception")
     }
 
-    fun start() {
+    override fun start() {
+        super.start()
         println("HttpServer start")
-        isRunning = true
         serverSocket = ServerSocket(port)
         while(isRunning) {
             val socket = serverSocket!!.accept()
@@ -39,12 +37,5 @@ abstract class Server(
             }
         }
     }
-
-    fun stop() {
-        isRunning = false
-        scope.cancel()
-        job.cancel()
-    }
-
 
 }
