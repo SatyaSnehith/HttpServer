@@ -23,7 +23,7 @@ fun createRequest(inputStream: InputStream): Request {
 
     return Request(
         method = method,
-        path = path,
+        uri = path,
         version = version,
         headers = headers
     )

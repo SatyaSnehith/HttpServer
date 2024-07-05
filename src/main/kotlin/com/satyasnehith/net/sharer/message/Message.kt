@@ -45,17 +45,17 @@ class ConnectResponse (
 }
 
 enum class DisconnectionReason {
-//    @SerialName("un")
+    @SerialName("un")
     UNAVAILABLE,
-//    @SerialName("ic")
+    @SerialName("ic")
     INCORRECT,
-//    @SerialName("bl")
+    @SerialName("bl")
     BLOCKED
 }
 
 enum class ConnectionStatus {
-//    @SerialName("cn")
+    @SerialName("cn")
     CONNECTED,
-//    @SerialName("nc")
+    @SerialName("nc")
     NOT_CONNECTED,
 }

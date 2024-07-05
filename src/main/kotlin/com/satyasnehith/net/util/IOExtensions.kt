@@ -54,3 +54,19 @@ fun OutputStream.writeCrlf(string: String = "") {
     write((string + CRLF).toByteArray())
 }
 
+@Throws(IOException::class)
+fun OutputStream.writeFile(
+    inputStream: InputStream,
+    length: Long,
+    progress: Progress,
+) {
+    val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
+    var read = inputStream.read(buffer)
+    var totalRead: Long = read.toLong()
+    while(totalRead <= length && read > 0) {
+        write(buffer, 0, read)
+        read = inputStream.read(buffer)
+        totalRead += read
+        progress.sent = totalRead
+    }
+}

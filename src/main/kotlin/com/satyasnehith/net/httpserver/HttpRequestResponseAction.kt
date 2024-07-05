@@ -1,20 +1,18 @@
 package com.satyasnehith.net.httpserver
 
+import com.satyasnehith.net.httpserver.file.FileReceiver
+import com.satyasnehith.net.httpserver.file.FileSender
 import com.satyasnehith.net.httpserver.file.IFile
 import com.satyasnehith.net.server.SocketLevelAction
 import com.satyasnehith.net.httpserver.request.*
-import com.satyasnehith.net.httpserver.response.Response
-import com.satyasnehith.net.httpserver.response.StringResponse
-import com.satyasnehith.net.httpserver.response.send
+import com.satyasnehith.net.httpserver.response.*
 import com.satyasnehith.net.httpserver.util.IOUtil
 import com.satyasnehith.net.httpserver.util.Logger
-import com.satyasnehith.net.util.CRLF
-import com.satyasnehith.net.util.readAvailable
-import com.satyasnehith.net.util.readLine
-import com.satyasnehith.net.util.readString
+import com.satyasnehith.net.util.*
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.InputStream
+import java.io.OutputStream
 import java.net.Socket
 import kotlin.jvm.Throws
 
@@ -22,7 +20,7 @@ class HttpRequestResponseAction: SocketLevelAction {
 
     private val requestHandlers: ArrayList<RequestHandler> = ArrayList()
 
-    val fileCreatorInterface = com.satyasnehith.net.httpserver.FileCreatorInterface { name ->
+    val fileCreatorInterface = FileCreatorInterface { name ->
         val dir = File("/home/satya/Documents/LocalServerUploads")
         if (!dir.exists()) dir.mkdirs()
         val file = File(dir, name)
@@ -33,6 +31,8 @@ class HttpRequestResponseAction: SocketLevelAction {
 
     val fileReceiver = FileReceiver()
 
+    val fileSender = FileSender()
+
     override fun action(socket: Socket) {
         val inputStream = socket.getInputStream()
         val outputStream = socket.getOutputStream()
@@ -40,11 +40,12 @@ class HttpRequestResponseAction: SocketLevelAction {
         val request = try {
             receiveRequest(inputStream)
         } catch (e: Exception) {
-            outputStream.send(
-                StringResponse(
+            send(
+                response = StringResponse(
                     statusCode = 400,
                     body = "Bad Request\n${e.message}"
-                )
+                ),
+                outputStream = outputStream
             )
             return
         }
@@ -63,7 +64,10 @@ class HttpRequestResponseAction: SocketLevelAction {
             response = Response(response)
         }
 
-        outputStream.send(response)
+        send(
+            response = response,
+            outputStream = outputStream
+        )
 
     }
 
@@ -79,7 +83,7 @@ class HttpRequestResponseAction: SocketLevelAction {
         if (request.isPost) {
             request = when(headers.contentType) {
                 ContentType.JSON, ContentType.TEXT -> {
-                    val len = request.contentLength
+                    val len = request.headers.contentLength?.toInt()
                     val body = if (len != null) {
                         inputStream.readString(len)
                     } else {
@@ -107,9 +111,10 @@ class HttpRequestResponseAction: SocketLevelAction {
                             val name = contentDisposition.name.ifEmpty { index.toString() }
                             val formData: FormData = if (!fileName.isNullOrBlank()) {
                                 val file = fileCreatorInterface.onCreateFile(fileName)
-                                val fileFormDataInfo = fileReceiver.receive(
+                                val fileFormDataInfo = fileReceiver.receiveFormData(
                                     inputStream = inputStream,
-                                    outputStream = file.outputStream(),
+                                    file = file,
+                                    length = formHeaders.contentLength,
                                     boundary = CRLF + boundary
                                 )
                                 continueReading = !(fileFormDataInfo.isLastFormDate)
@@ -120,7 +125,7 @@ class HttpRequestResponseAction: SocketLevelAction {
                                 val formDataInfo = IOUtil.receiveFormData(
                                     inputStream = inputStream,
                                     outputStream = byteArrayOutputStream,
-                                    boundary = CRLF + boundary
+                                    boundary = CRLF + boundary,
                                 )
                                 val data = byteArrayOutputStream.toString()
                                 continueReading = !(formDataInfo.isLastFormDate)
@@ -145,6 +150,51 @@ class HttpRequestResponseAction: SocketLevelAction {
         }
 
         return request
+    }
+
+    fun send(
+        response: Response,
+        outputStream: OutputStream
+    ) {
+        outputStream.writeCrlf(response.startLine)
+        for (header in response.headers.lines()) {
+            outputStream.writeCrlf(header)
+        }
+        outputStream.writeCrlf()
+        when(response) {
+            is StringResponse -> {
+                outputStream.write(response.body)
+            }
+            is FileResponse -> {
+                fileSender.send(
+                    file = response.body,
+                    outputStream = outputStream
+                )
+            }
+        }
+        outputStream.flush()
+        outputStream.close()
+    }
+
+    fun static(
+        fileMap: HashMap<String, IFile>,
+    ) {
+        for ((path, file) in fileMap) {
+            if (path == "/index.html") {
+                get("/") {
+                    FileResponse(
+                        body = file
+                    )
+
+                }
+            } else {
+                get(path) {
+                    FileResponse(
+                        body = file
+                    )
+                }
+            }
+        }
     }
 
 

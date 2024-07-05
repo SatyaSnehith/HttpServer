@@ -26,9 +26,9 @@ val Headers.boundary: String?
         return "--" + contentTypeValue.substring(boundaryPos + 9)
     }
 
-val Request.contentLength: Int?
+val Headers.contentLength: Long?
     get() {
-        return headers[Headers.ContentLength]?.toIntOrNull()
+        return get(Headers.ContentLength)?.toLongOrNull()
     }
 
 val Request.isPost: Boolean

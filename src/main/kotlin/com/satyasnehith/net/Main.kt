@@ -1,20 +1,33 @@
 package com.satyasnehith.net
 
 import com.satyasnehith.net.httpserver.HttpServer
-import com.satyasnehith.net.httpserver.request.MultipartRequest
-import com.satyasnehith.net.httpserver.request.StringRequest
 import com.satyasnehith.net.httpserver.response.StringResponse
+import com.satyasnehith.net.httpserver.util.FileUtil
 import com.satyasnehith.net.sharer.client.SharerClient
 import com.satyasnehith.net.sharer.json
 import com.satyasnehith.net.sharer.message.ConnectRequest
 import com.satyasnehith.net.sharer.message.ConnectResponse
+import com.satyasnehith.net.sharer.message.ConnectionStatus
 import com.satyasnehith.net.sharer.server.SharerServer
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+import java.io.File
 
 fun main(args: Array<String>) {
-//    startServer()
-    startSharerClient()
+    startServer()
+//    startSharerClient()
+//    startSharerServer()
+//    getFiles()
+}
+
+fun getFiles() {
+    val map = HashMap<String, File>()
+    FileUtil.getFileMap(
+        folder = File(""),
+        map = map
+    )
+    for (path in map.keys) {
+        println(path)
+    }
 }
 
 fun startServer() {
@@ -22,16 +35,13 @@ fun startServer() {
     val server = HttpServer()
 
     server.addRoutes {
-        get("/") {
-            StringResponse(200, body = "Hello World! Get")
-        }
-        post("/") {
-            (it as? MultipartRequest)?.let { multipart ->
-                for (formData in multipart.body) {
-                    println("FORM $formData")
-                }
-            }
-            StringResponse(200, body = "Hello World! post ${(it as? StringRequest)?.body}")
+        static(
+            fileMap = FileUtil.mapFromFolder("")
+        )
+        get("/dsa") {
+            StringResponse(
+                body = it.queries.joinToString()
+            )
         }
     }
     server.start()
@@ -49,7 +59,7 @@ fun startSharerClient() {
 
 fun checkJson() {
     println("ConnectRequest ${json.encodeToString(ConnectRequest())}")
-    val s = json.encodeToString(ConnectResponse())
+    val s = json.encodeToString(ConnectResponse(ConnectionStatus.CONNECTED))
     println("ConnectResponse $s")
     println("ConnectResponse ${json. decodeFromString<ConnectResponse>(s).reason}")
 }

@@ -1,17 +1,23 @@
 package com.satyasnehith.net.httpserver.util
 
-import com.satyasnehith.net.httpserver.request.FormDataInfo
+import com.satyasnehith.net.httpserver.file.FormDataInfo
+import com.satyasnehith.net.util.Progress
 import java.io.InputStream
 import java.io.OutputStream
 
 object IOUtil {
 
-    fun receiveFormData(inputStream: InputStream, outputStream: OutputStream, boundary: String): FormDataInfo {
+    fun receiveFormData(
+        inputStream: InputStream,
+        outputStream: OutputStream,
+        boundary: String,
+        progress: Progress? = null,
+    ): FormDataInfo {
         val boundaryBytes = boundary.toByteArray()
         var foundBoundaryIndex = 0
         val suspectedBoundary = ArrayList<Byte>()
         var read: Int = inputStream.read()
-        var readCount = 1
+        var readCount: Long = 1
         while(read >= 0) {
             val byte = read.toByte()
             if (byte == boundaryBytes[foundBoundaryIndex]) {
@@ -33,6 +39,7 @@ object IOUtil {
             }
             read = inputStream.read()
             readCount++
+            progress?.sent = readCount
         }
         return FormDataInfo(
             length = readCount,
