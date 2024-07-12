@@ -6,7 +6,7 @@ plugins {
     application
 }
 
-group = "com.satyasnehith"
+group = "ss"
 version = "1.0-SNAPSHOT"
 
 repositories {
@@ -30,5 +30,5 @@ tasks.withType<KotlinCompile> {
 }
 
 application {
-    mainClass.set("com.satyasnehith.net.MainKt")
+    mainClass.set("ss.net.MainKt")
 }
