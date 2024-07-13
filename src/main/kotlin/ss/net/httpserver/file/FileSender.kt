@@ -1,7 +1,7 @@
 package ss.net.httpserver.file
 
 import ss.io.file.IFile
-import ss.net.util.Progress
+import ss.io.util.Progress
 import ss.io.util.writeFile
 import java.io.OutputStream
 

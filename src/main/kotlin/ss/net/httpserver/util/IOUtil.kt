@@ -1,7 +1,7 @@
 package ss.net.httpserver.util
 
 import ss.net.httpserver.file.FormDataInfo
-import ss.net.util.Progress
+import ss.io.util.Progress
 import java.io.InputStream
 import java.io.OutputStream
 

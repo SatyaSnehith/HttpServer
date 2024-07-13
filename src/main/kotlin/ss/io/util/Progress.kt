@@ -1,4 +1,4 @@
-package ss.net.util
+package ss.io.util
 
 class Progress(
     var sent: Long,

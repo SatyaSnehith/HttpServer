@@ -11,6 +11,7 @@ import ss.net.sharer.message.ConnectionStatus
 import ss.net.sharer.server.SharerServer
 import kotlinx.serialization.encodeToString
 import java.io.File
+import java.net.URLClassLoader
 
 fun main(args: Array<String>) {
     startServer()
@@ -35,6 +36,17 @@ fun startServer() {
     val server = HttpServer()
 
     server.addRoutes {
+//        val r = this.javaClass.classLoader.getResource("sd")
+//        println("RESOURCE: $r")
+//        if (r != null) {
+//            URLClassLoader(arrayOf(r), this.javaClass.classLoader).urLs.forEach {
+//                println("URL: ${it.path}")
+//            }
+//            println("RESOURCE: ${File(r.path).length()}")
+//        }
+//
+//        File("new.txt").createNewFile()
+
         static(
             fileMap = FileUtil.mapFromFolder("")
         )

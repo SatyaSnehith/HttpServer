@@ -4,7 +4,7 @@ import ss.net.server.action.BlockedIpAddressAction
 import ss.net.server.action.NewIpAddressAction
 import ss.net.server.Server
 
-class HttpServer: Server() {
+open class HttpServer: Server() {
 
     val blockedIpAddressAction = BlockedIpAddressAction.create {
         println("BlockedIpAddressAction ip: " + it.inetAddress.hostAddress)

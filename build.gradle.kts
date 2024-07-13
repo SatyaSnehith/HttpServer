@@ -29,6 +29,16 @@ tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
 }
 
+tasks.jar {
+    manifest {
+        attributes["Main-Class"] = "ss.net.MainKt"
+    }
+    configurations["compileClasspath"].forEach { file: File ->
+        from(zipTree(file.absoluteFile))
+    }
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
 application {
     mainClass.set("ss.net.MainKt")
 }
