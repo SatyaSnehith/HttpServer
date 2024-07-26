@@ -13,7 +13,7 @@ const red = {
 }
 
 function openScreen2() {
-    mainNav.setScreen(screen2)
+    mainNav.setScreen(new Screen2())
 }
 
 function changeTheme() {
@@ -26,66 +26,108 @@ function openPopup(event) {
     mainNav.setDialog(popup, event)
 }
 
+const homeTopBar = () => new Row(
+    {
+        id: "row",
+        items: [
+            new Button(
+                {   
+                    id: 'webShareBtn',
+                    text: 'WebShare',
+                    svg: SettingsIcon, 
+                    attrs: { onclick: openScreen2 }
+                }
+            ),
+            new HorizontalSpace('auto'),
+            new HorizontalSpace('4px'),
+            new IconButton(
+                {
+                    svg: SettingsIcon, 
+                    attrs: { onclick: openPopup }
+                }
+            )
+        ],
+        styles: {
+            alignItems: 'center',
+            padding: '4px'
+        }
+    }
+)
+
+
+const bottomBar = () => new Row(
+    {
+        items: [
+            new Button(
+                {
+                    text: 'WebShare',
+                    svg: SettingsIcon, 
+                    attrs: { onclick: openScreen2 }
+                }
+            ),
+            new IconButton(
+                {
+                    svg: SettingsIcon, 
+                    attrs: { onclick: openPopup }
+                }
+            )
+        ],
+        styles: {
+            alignItems: 'center',
+            padding: '4px'
+        }
+    }
+)
+
 const screen1 = new Screen(
     {
         id: 1,
-        els: [
-            new Row(
-                {
-                    els: [
-                        new Button(
-                            {
-                                text: 'WebShare', 
-                                attrs: { onclick: openScreen2 }
-                            }
-                        ),
-                        new HorizontalSpace('auto'),
-                        new HorizontalSpace('4px'),
-                        new IconButton(
-                            {
-                                svg: SettingsIcon, 
-                                attrs: { onclick: openPopup }
-                            }
-                        )
-                    ],
-                    styles: {
-                        alignItems: 'center',
-                        padding: '4px'
-                    }
-                }
-                
-            ),
+        items: [
+            homeTopBar(),
+            homeTopBar(),
+            new VerticalSpace('auto'),
+            bottomBar(),
             // new HorizontalDivider()
         ]
     }
 )
 
-const screen2 = new Screen(
-    {
-        id: 2,
-        els: [
-            new P(
-                {
-                    text: 'Dialog!',
-                    attrs: { 
-                        onclick: function() { 
-                            console.log('d');
-                            mainNav.setDialog(dialog)
+class Screen2 extends Screen {
+
+    constructor() {
+        super(
+            {
+                id: 2,
+                items: [
+                    new P(
+                        {
+                            text: 'Dialog!',
+                            attrs: { 
+                                onclick: function() { 
+                                    console.log('d');
+                                    mainNav.setDialog(dialog)
+                                }
+                            }
                         }
-                    }
-                }
-            )
-        ]
+                    )
+                ]
+            }
+        )
     }
-)
+
+}
 
 const dialog = new Dialog(
     {
         id: 3,
-        els: [
+        items: [
             new P(
                 {
                     text: 'x',
+                    styles: {
+                        height: '200px',
+                        display: 'block',
+                    },
                     attrs: { 
                         onclick: function() {
                             mainNav.setDialog(null)
@@ -101,25 +143,29 @@ const dialog = new Dialog(
 const popup = new Popup(
     {
         id: 4,
-        els: [
+        items: [
             new Button(
                 {
-                    text: 'abcd'
+                    text: 'abcd',
+                    svg: LightThemeIcon,
                 }
             ),
             new Button(
                 {
-                    text: 'ewqads'
+                    text: 'ewqads',
+                    svg: DarkThemeIcon,
                 }
             ),
             new Button(
                 {
-                    text: 'abasdgfdcd'
+                    text: 'abasdgfdcd',
+                    svg: DarkThemeIcon,
                 }
             ),
             new Button(
                 {
-                    text: 'abcadssdad'
+                    text: 'abcadssdad',
+                    svg: DarkThemeIcon,
                 }
             ),
         ],

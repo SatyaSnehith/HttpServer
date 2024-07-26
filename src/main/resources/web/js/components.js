@@ -5,17 +5,31 @@ function fromHTML(html, trim = true) {
     return template.content.children[0];
 }
 
+const tagMap = {}
+
+function createTagName(tag) {
+    let count = 1
+    if (tagMap[tag]) {
+        count = tagMap[tag]
+        count++
+    }
+    tagMap[tag] = count
+    return count == 1 ? tag : tag + (count - 1)
+}
+
 class Element {
 
     /**
      * 
-     * @param { { tag, styles, attrs } } props 
+     * @param { { tag, id, styles, attrs } } props 
      */
     constructor(props) {
         if (props) {
             this.createElement(props.tag)
             this.style(props.styles)
-            this.attr(props.attrs)    
+            this.attr(props.attrs)
+            props.id = props.id || props.tag
+            this.id = createTagName(props.id)
         }
     }
 
@@ -55,6 +69,7 @@ class Element {
     }
 
     add(element) {
+        this[element.id] = element
         this.node.appendChild(element.node)
     }
 
@@ -81,12 +96,47 @@ class Element {
     }
 }
 
+class ElementCollection extends Element {
 
-class Row extends Element {
+    /**
+     * 
+     * @param { { tag, id, items, styles, attrs } } props 
+     */
+    constructor(props) {
+        super(props)
+        if (props) {
+            this.items = props.items
+        }
+    }
+
+    add(element) {
+        if(element instanceof ElementCollection) {
+            this.addChildInstances(element)
+        }
+        if(element instanceof Element) {
+            this[element.id] = element
+            this.node.appendChild(element.node)
+        }
+    }
+
+    addChildInstances(collection) {
+        for (const el of collection.items) {
+            if(el instanceof ElementCollection) {
+                this.addChildInstances(el)
+            }
+            if(el instanceof Element) {
+                this[el.id] = el
+            }
+        }
+    }
+}
+
+
+class Row extends ElementCollection {
     
     /**
      * 
-     * @param { { els, styles, attrs } } props 
+     * @param { { id, items, styles, attrs } } props 
      */
     constructor(props) {
         super(
@@ -101,7 +151,7 @@ class Row extends Element {
                 flexDirection: 'row'
             }
         )
-        for(const e of props.els) {
+        for(const e of props.items) {
             this.add(e)
         }
     }
@@ -109,17 +159,17 @@ class Row extends Element {
 }
 
 
-class Column extends Element {
+class Column extends ElementCollection {
     
     /**
      * 
-     * @param { { els, styles, attrs } } props 
+     * @param { { id, items, styles, attrs } } props 
      */
     constructor(props) {
         super(
             { 
                 tag: 'div',
-                 ...props
+                ...props
             }
         )
         this.style(
@@ -128,7 +178,7 @@ class Column extends Element {
                 flexDirection: 'column'
             }
         )
-        for(const e of props.els) {
+        for(const e of props.items) {
             this.add(e)
         }
     }
@@ -257,7 +307,7 @@ class IconButton extends Element {
         super(
             { 
                 tag: 'div',
-                 ...props
+                ...props
             }
         )
         this.style(
@@ -287,14 +337,13 @@ class Button extends Element {
 
     /**
      * 
-     * @param { { text, href, styles, attrs } } props 
+     * @param { { text, href, svg, styles, attrs } } props 
      */
     constructor(props) {
         super(
             {
                 tag: 'a',
-                styles: props.styles,
-                attrs: props.attrs
+                ...props
             }
         )
         this.style(
@@ -309,7 +358,35 @@ class Button extends Element {
             Style.Padding('4px 8px'),
             Style.Pointer
         )
-        this.content(props.text)
+        if (props.svg) {
+            this.style(
+                {
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                }
+            )
+            this.svg = new SvgIcon(
+                {
+                    svg: props.svg
+                }
+            )
+            this.svg.style(
+                Style.Size('16px'), 
+                { pointerEvents: 'none' }
+            )
+            this.add(this.svg)
+            this.add(
+                new HorizontalSpace('4px')
+            )
+        }
+        this.add(
+            new A(
+                {
+                    text: props.text,
+                }
+            )
+        )
         if (props.href) {
             this.href(props.href)
         }
@@ -321,11 +398,11 @@ class Button extends Element {
 
 }
 
-class Screen extends Element {
+class Screen extends ElementCollection {
 
     /**
      * 
-     * @param { { id, els } } props 
+     * @param { { id, items } } props 
      */
     constructor(props) {
         super(
@@ -342,7 +419,7 @@ class Screen extends Element {
             }
         )
         this.id = props.id
-        for(const e of props.els) {
+        for(const e of props.items) {
             this.add(e)
         }
         
@@ -361,15 +438,13 @@ class Popup extends Element {
 
     /**
      * 
-     * @param { { id, els } } props 
+     * @param { { id, items } } props 
      */
     constructor(props) {
         super(
             {
                 tag: 'div', 
                 styles: {
-                    display: 'flex',
-                    flexDirection: 'column',
                     width: '100%',
                     height: '100%',
                     position: 'absolute'
@@ -394,6 +469,8 @@ class Popup extends Element {
                     backgroundColor: Color.BgColor,
                     position: 'absolute',
                     borderRadius: '6px',
+                    display: 'flex',
+                    flexDirection: 'column',
                     ...Style.Border
                 },
             }
@@ -402,7 +479,7 @@ class Popup extends Element {
 
         this.add(this.dialogElement)
 
-        for(const e of props.els) {
+        for(const e of props.items) {
             this.dialogElement.add(e)
         }
 
@@ -447,7 +524,7 @@ class Dialog extends Element {
 
     /**
      * 
-     * @param { { id, els } } props 
+     * @param { { id, items } } props 
      */
     constructor(props) {
         super( 
@@ -489,7 +566,7 @@ class Dialog extends Element {
             }
         )
         this.add(this.dialogNode)
-        for(const e of props.els) {
+        for(const e of props.items) {
             this.dialogNode.add(e)
         }
     }
