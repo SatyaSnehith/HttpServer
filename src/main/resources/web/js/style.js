@@ -12,6 +12,14 @@ const Style = {
     Size: s => { return { height: s, width: s } },
     Pointer: { cursor: 'pointer' },
     Padding: (p) => { return { padding: p } },
+    Row: {
+        display: 'flex',
+        flexDirection: 'row',
+    },
+    Column: {
+        display: 'flex',
+        flexDirection: 'column',
+    },
     Border: {
         borderWidth: '1px',
         borderColor: Color.BorderColor,

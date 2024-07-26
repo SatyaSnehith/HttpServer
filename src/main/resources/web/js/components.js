@@ -69,8 +69,10 @@ class Element {
     }
 
     add(element) {
-        this[element.id] = element
-        this.node.appendChild(element.node)
+        if(element instanceof Element) {
+            this[element.id] = element
+            this.node.appendChild(element.node)    
+        }
     }
 
     onClick(onclick) {
@@ -113,9 +115,12 @@ class ElementCollection extends Element {
         if(element instanceof ElementCollection) {
             this.addChildInstances(element)
         }
-        if(element instanceof Element) {
-            this[element.id] = element
-            this.node.appendChild(element.node)
+        super.add(element)
+    }
+
+    addAll(elements) {
+        for (const el of elements) {
+            this.add(el)
         }
     }
 
@@ -402,27 +407,28 @@ class Screen extends ElementCollection {
 
     /**
      * 
-     * @param { { id, items } } props 
+     * @param { { id, el, styles } } props 
      */
     constructor(props) {
         super(
             {
                 tag: 'div', 
                 styles: {
-                    display: 'flex',
-                    flexDirection: 'column',
                     width: '100%',
                     height: '100%',
                     position: 'absolute',
-                    backgroundColor: Color.BgColor
+                    backgroundColor: Color.BgColor,
                 }
             }
         )
-        this.id = props.id
-        for(const e of props.items) {
-            this.add(e)
+
+        this.id = createTagName(props.id || 'screen')
+
+        if (props.styles) {
+            this.style(props.styles)
         }
-        
+
+        this.add(props.el)        
     }
 
     onmount() {
@@ -458,7 +464,6 @@ class Popup extends Element {
                 }
             }
         )
-        this.id = props.id
 
         this.dialogElement = new Element(
             {
@@ -524,7 +529,7 @@ class Dialog extends Element {
 
     /**
      * 
-     * @param { { id, items } } props 
+     * @param { { id, items } } props
      */
     constructor(props) {
         super( 
@@ -548,7 +553,7 @@ class Dialog extends Element {
             }
 
         )
-        this.id = props.id
+
         this.style(
             {
                 backgroundColor: '#55555555'

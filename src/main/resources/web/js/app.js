@@ -35,7 +35,6 @@ const homeTopBar = () => new Row(
                     id: 'webShareBtn',
                     text: 'WebShare',
                     svg: SettingsIcon, 
-                    attrs: { onclick: openScreen2 }
                 }
             ),
             new HorizontalSpace('auto'),
@@ -79,38 +78,45 @@ const bottomBar = () => new Row(
     }
 )
 
-const screen1 = new Screen(
+const screen1Content = () => new Column(
     {
-        id: 1,
         items: [
-            homeTopBar(),
             homeTopBar(),
             new VerticalSpace('auto'),
             bottomBar(),
-            // new HorizontalDivider()
-        ]
+        ],
+        styles: Style.Size('inherit')
     }
 )
+
+class Screen1 extends Screen {
+    
+    constructor() {
+        super(
+            {
+                el: screen1Content(),
+            }
+        )
+        this.webShareBtn.onClick(openScreen2)
+    }
+}
 
 class Screen2 extends Screen {
 
     constructor() {
         super(
             {
-                id: 2,
-                items: [
-                    new P(
-                        {
-                            text: 'Dialog!',
-                            attrs: { 
-                                onclick: function() { 
-                                    console.log('d');
-                                    mainNav.setDialog(dialog)
-                                }
+                el: new P(
+                    {
+                        text: 'Dialog!',
+                        attrs: { 
+                            onclick: function() { 
+                                console.log('d');
+                                mainNav.setDialog(dialog)
                             }
                         }
-                    )
-                ]
+                    }
+                )
             }
         )
     }
@@ -173,5 +179,5 @@ const popup = new Popup(
 )
 
 mainNav.setScreen(
-   screen1
+   new Screen1()
 )
