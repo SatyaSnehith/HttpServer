@@ -293,20 +293,16 @@ class SvgIcon extends Element {
         super()
         this.node = fromHTML(props.svg)
         this.style(props.styles)
-        this.style(
-            {
-                verticalAlign: 'top'
-            }
-        )
         this.attr(props.attrs)
     }
+
 }
 
 class IconButton extends Element {
 
     /**
      * 
-     * @param { { svg, styles, attrs } } props 
+     * @param { { svgName, styles, attrs } } props 
      */
     constructor(props) {
         super(
@@ -324,9 +320,10 @@ class IconButton extends Element {
         )
         this.svg = new SvgIcon(
             {
-                svg: props.svg
+                svg: '<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"></svg>'
             }
         )
+        Icon.set(props.svgName, this)
         this.svg.style(Style.Size('18px'), { pointerEvents: 'none' } )
         this.add(this.svg)
         this.hoverStyle(Style.EmptyBg, Style.CardBg)

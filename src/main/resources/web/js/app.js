@@ -41,7 +41,7 @@ const homeTopBar = () => new Row(
             new HorizontalSpace('4px'),
             new IconButton(
                 {
-                    svg: SettingsIcon, 
+                    svgName: 'settings', 
                     attrs: { onclick: openPopup }
                 }
             )
@@ -66,7 +66,7 @@ const bottomBar = () => new Row(
             ),
             new IconButton(
                 {
-                    svg: SettingsIcon, 
+                    svgName: 'settings', 
                     attrs: { onclick: openPopup }
                 }
             )
