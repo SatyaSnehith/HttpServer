@@ -28,8 +28,9 @@ class Element {
             this.createElement(props.tag)
             this.style(props.styles)
             this.attr(props.attrs)
-            props.id = props.id || props.tag
-            this.id = createTagName(props.id)
+            if (props.id) {
+                this.id = createTagName(props.id)
+            }
         }
     }
 
@@ -37,6 +38,11 @@ class Element {
         this.node = document.createElement(tag)
     }
 
+    /**
+     * Resets styles and attributes
+     * 
+     * @param { string } c 
+     */
     content(c) {
         this.node.innerHTML = c
     }
@@ -70,7 +76,9 @@ class Element {
 
     add(element) {
         if(element instanceof Element) {
-            this[element.id] = element
+            if (element.id) {
+                this[element.id] = element
+            }
             this.node.appendChild(element.node)    
         }
     }
@@ -130,7 +138,9 @@ class ElementCollection extends Element {
                 this.addChildInstances(el)
             }
             if(el instanceof Element) {
-                this[el.id] = el
+                if (el.id) {
+                    this[el.id] = el
+                }
             }
         }
     }
@@ -287,13 +297,34 @@ class SvgIcon extends Element {
 
     /**
      * 
-     * @param { { svg, styles, attrs } } props 
+     * @param { { svgName, size, styles, attrs } } props 
      */
     constructor(props) {
         super()
-        this.node = fromHTML(props.svg)
-        this.style(props.styles)
+        this.size = props.size || '18px'
+        const svg = '<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"></svg>'
+        this.node = fromHTML(svg)
+        this.content(
+            {
+                styles: props.styles,
+            }
+        )
         this.attr(props.attrs)
+        Icon.set(props.svgName, this)
+    }
+
+    content(props) {
+        if (props.svg) {
+            super.content(props.svg)
+        }
+        this.style(props.styles)
+        this.style(
+            {
+                verticalAlign: 'top',
+                pointerEvents: 'none'
+            },
+            Style.Size(this.size)
+        )
     }
 
 }
@@ -320,11 +351,10 @@ class IconButton extends Element {
         )
         this.svg = new SvgIcon(
             {
-                svg: '<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"></svg>'
+                svgName: props.svgName,
+                size: '16px'
             }
         )
-        Icon.set(props.svgName, this)
-        this.svg.style(Style.Size('18px'), { pointerEvents: 'none' } )
         this.add(this.svg)
         this.hoverStyle(Style.EmptyBg, Style.CardBg)
     }
@@ -339,7 +369,7 @@ class Button extends Element {
 
     /**
      * 
-     * @param { { text, href, svg, styles, attrs } } props 
+     * @param { { text, href, svgName, styles, attrs } } props 
      */
     constructor(props) {
         super(
@@ -360,7 +390,7 @@ class Button extends Element {
             Style.Padding('4px 8px'),
             Style.Pointer
         )
-        if (props.svg) {
+        if (props.svgName) {
             this.style(
                 {
                     display: 'flex',
@@ -370,12 +400,9 @@ class Button extends Element {
             )
             this.svg = new SvgIcon(
                 {
-                    svg: props.svg
+                    svgName: props.svgName,
+                    size: '16px'
                 }
-            )
-            this.svg.style(
-                Style.Size('16px'), 
-                { pointerEvents: 'none' }
             )
             this.add(this.svg)
             this.add(

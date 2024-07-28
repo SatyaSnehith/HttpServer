@@ -31,10 +31,10 @@ const homeTopBar = () => new Row(
         id: "row",
         items: [
             new Button(
-                {   
+                {
                     id: 'webShareBtn',
                     text: 'WebShare',
-                    svg: SettingsIcon, 
+                    svgName: 'settings', 
                 }
             ),
             new HorizontalSpace('auto'),
@@ -60,13 +60,13 @@ const bottomBar = () => new Row(
             new Button(
                 {
                     text: 'WebShare',
-                    svg: SettingsIcon, 
+                    svgName: 'settings', 
                     attrs: { onclick: openScreen2 }
                 }
             ),
             new IconButton(
                 {
-                    svgName: 'settings', 
+                    svgName: 'moreVertical', 
                     attrs: { onclick: openPopup }
                 }
             )
@@ -152,26 +152,14 @@ const popup = new Popup(
         items: [
             new Button(
                 {
-                    text: 'abcd',
-                    svg: LightThemeIcon,
+                    text: 'light',
+                    svgName: 'sun'
                 }
             ),
             new Button(
                 {
-                    text: 'ewqads',
-                    svg: DarkThemeIcon,
-                }
-            ),
-            new Button(
-                {
-                    text: 'abasdgfdcd',
-                    svg: DarkThemeIcon,
-                }
-            ),
-            new Button(
-                {
-                    text: 'abcadssdad',
-                    svg: DarkThemeIcon,
+                    text: 'dark',
+                    svgName: 'moon'
                 }
             ),
         ],
