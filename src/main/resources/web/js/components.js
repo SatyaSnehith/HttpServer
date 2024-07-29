@@ -54,7 +54,16 @@ class Element {
                 const style = styles[i]
                 if (style) {
                     for (const [key, value] of Object.entries(style)) {
-                        this.node.style[key] = value
+                        if (typeof value == 'string') {
+                            this.node.style[key] = value
+                        } else if (value instanceof Ref) {
+                            this.node.style[key] = value.value
+                            value.addObserver(
+                                (v) => {
+                                    this.node.style[key] = value.value
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -169,11 +178,15 @@ class RefElementCollection extends Element {
         super(props)
         this.toElement = props.toElement
         if (props.items instanceof RefArray) {
+            for (const item of props.items.values) {
+                this.onAdd(item)
+            }
             props.items.addObserver(
                 {
                     onAdd: (value) => this.onAdd(value),
                     onRemove: (value, index) => this.onRemove(value, index),
                     onInsert: (value, index) => this.onInsert(value, index),
+                    onReplace: (index, value) => this.onReplace(index, value),
                     onAddAll: (values) => this.onAddAll(values),
                     onRemoveAll: (values) => this.onRemoveAll(values),
                 }
@@ -182,6 +195,13 @@ class RefElementCollection extends Element {
     }
 
     onUpdate(values) {}
+
+    onReplace(index, value) {
+        const child = this.node.children[index]
+        if (child) {
+            child.replaceWith(this.toElement(value).node);
+        }
+    }
 
     onAdd(value) {
         this.add(this.toElement(value))

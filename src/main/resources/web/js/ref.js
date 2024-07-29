@@ -23,6 +23,10 @@ class Ref {
     get value() {
         return this._value
     }
+
+    get observerCount() {
+        return this.observers.length
+    }
 }
 
 class RefArray {
@@ -64,8 +68,18 @@ class RefArray {
         this.callObservers('onInsert', (fun) => fun(value, index))
     }
 
+    callReplace(index, value) {
+        this.callObservers('onReplace', (fun) => fun(index, value))
+    }
+
     callUpdate() {
         this.callObservers('onUpdate', (fun) => fun(this._values))
+    }
+
+    replaceValue(index, value) {
+        this._values.splice(index, 1, value);
+        this.callReplace(index, value)
+        this.callUpdate()
     }
 
     addValue(value) {
@@ -96,6 +110,9 @@ class RefArray {
         return this._values
     }
 
+    get observerCount() {
+        return this.observers.length
+    }
 }
 
 class RefArrayObserver {

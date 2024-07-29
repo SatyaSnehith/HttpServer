@@ -80,7 +80,14 @@ const bottomBar = () => new Row(
 
 const para = ref('para')
 
-const items = refArray('1')
+const color = ref('yellow')
+
+const items = refArray(
+    {
+        id: 1,
+        text: 13233422,
+    }
+)
 
 const screen1Content = () => new Column(
     {
@@ -98,10 +105,10 @@ const screen1Content = () => new Column(
                     toElement: (item) => {
                         return new P(
                             {
-                                text: item,
+                                text: item.text,
                                 styles: {
                                     display: 'block',
-                                    color: 'green',
+                                    color: color,
                                 }
                             }
                         )
