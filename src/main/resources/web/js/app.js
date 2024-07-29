@@ -78,10 +78,36 @@ const bottomBar = () => new Row(
     }
 )
 
+const para = ref('para')
+
+const items = refArray('1')
+
 const screen1Content = () => new Column(
     {
         items: [
             homeTopBar(),
+            new P(
+                {
+                    text: para
+                }
+            ),
+            new RefElementCollection(
+                {
+                    tag: 'div',
+                    items: items,
+                    toElement: (item) => {
+                        return new P(
+                            {
+                                text: item,
+                                styles: {
+                                    display: 'block',
+                                    color: 'green',
+                                }
+                            }
+                        )
+                    }
+                }
+            ),
             new VerticalSpace('auto'),
             bottomBar(),
         ],

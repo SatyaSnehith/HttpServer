@@ -99,6 +99,19 @@ class Element {
         )
     }
 
+    checkRef(data, onUpdate) {
+        if (data instanceof Ref) {
+            data.addObserver(
+                (value) => {
+                    onUpdate(value)
+                }
+            )
+            onUpdate(data.value) 
+        } else {
+            onUpdate(data)
+        }
+    }
+
     static fromNode(node) {
         const element = new Element()
         element.node = node
@@ -144,6 +157,52 @@ class ElementCollection extends Element {
             }
         }
     }
+}
+
+class RefElementCollection extends Element {
+
+    /**
+     * 
+     * @param { { tag, id, items, toElement, styles, attrs } } props 
+     */
+    constructor(props) {
+        super(props)
+        this.toElement = props.toElement
+        if (props.items instanceof RefArray) {
+            props.items.addObserver(
+                {
+                    onAdd: (value) => this.onAdd(value),
+                    onRemove: (value, index) => this.onRemove(value, index),
+                    onInsert: (value, index) => this.onInsert(value, index),
+                    onAddAll: (values) => this.onAddAll(values),
+                    onRemoveAll: (values) => this.onRemoveAll(values),
+                }
+            )
+        }
+    }
+
+    onUpdate(values) {}
+
+    onAdd(value) {
+        this.add(this.toElement(value))
+    }
+
+    onRemove(value, index) {
+
+    }
+
+    onInsert(value, index) {
+
+    }
+
+    onAddAll(values) {
+
+    }
+
+    onRemoveAll(values) {
+
+    }
+
 }
 
 
@@ -248,16 +307,22 @@ class P extends Element {
         super(
             {
                 tag: 'a',
-                ...props
+                attrs: props.attrs,
+                styles: {
+                    ...{
+                        margin: '0px',
+                        color: Color.TextColor,
+                    },
+                    ...props.styles,
+                }
             }
         )
-        this.style(
-            {
-                margin: '0px',
-                color: Color.TextColor,
+        this.checkRef(
+            props.text,
+            (value) => {
+                this.content(value)
             }
         )
-        this.content(props.text)
     }
     
 }
@@ -272,13 +337,14 @@ class A extends Element {
         super(
             {
                 tag: 'a',
-                ...props
-            }
-        )
-        this.style(
-            {
-                margin: '0px',
-                color: Color.TextColor,
+                attrs: props.attrs,
+                styles: {
+                    ...{
+                        margin: '0px',
+                        color: Color.TextColor,
+                    },
+                    ...props.styles,
+                }
             }
         )
         this.content(props.text)
