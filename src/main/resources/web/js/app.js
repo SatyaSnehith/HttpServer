@@ -2,15 +2,7 @@ const body = document.getElementsByTagName('body')[0]
 
 const mainNav = new Nav(body)
 
-const $ = q => document.getElementById(q)
-
-const green = {
-    color: 'green'
-}
-
-const red = {
-    color: 'red'
-}
+// const $ = q => document.getElementById(q)
 
 function openScreen2() {
     mainNav.setScreen(new Screen2())

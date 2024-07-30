@@ -82,20 +82,81 @@ class RefArray {
         this.callUpdate()
     }
 
+    /**
+     * replaces the first value which matches with `obj` with `value` 
+     * 
+     * @param {*} obj 
+     * @param {*} value 
+     */
+    replaceValueMatching(obj, value) {
+        this.replaceValueFor(
+            (v) => {
+                for (const [key, va] of Object.entries(obj)) {
+                    if (v[key] != va) {
+                        return false
+                    }
+                }
+                return true
+            }
+            ,
+            value
+        )
+    }
+
+    /**
+     * 
+     * @param {function} condition 
+     * @param {*} value 
+     */
+    replaceValueFor(condition, value) {
+        this.replaceValue(this.findIndex(condition), value)
+    }
+
+    /**
+     * 
+     * @param {function} condition 
+     * @param {*} defaultValue 
+     */
+    findIndex(condition, defaultValue) {
+        return this._values.findIndex(condition, defaultValue);
+    }
+
     addValue(value) {
         this._values.push(value)
         this.callAdd(value)
         this.callUpdate()
     }
 
-    removeValue(value, i) {
-        const index = i || (this._values.length - 1)
-        this._values.splice(index, 1)
+    add(...values) {
+        for(const value of values) {
+            this.addValue(value)
+        }
+    }
+
+    addAll(values) {
+        for(const value of values) {
+            this.addValue(value)
+        }
+    }
+
+    remove(value) {
+        const index = this._values.indexOf(value)
+        this.removeIndex(index)
+    }
+
+    removeIndex(index) {
+        const len = this._values.length
+        if (index >= len || index < 0) return
+        const value = this._values.splice(index, 1)[0]
         this.callRemove(value, index)
         this.callUpdate()
     }
 
-    insertValue(value, index) {
+    removeLast() {
+        this.removeIndex(this._values.length - 1)
+    }
+
+    insert(value, index) {
         this._values.splice(index, 0, value);
         this.callInsert(value, index)
         this.callUpdate()

@@ -12,6 +12,8 @@ const Style = {
     Size: s => { return { height: s, width: s } },
     Pointer: { cursor: 'pointer' },
     Padding: (p) => { return { padding: p } },
+    Margin: (m) => { return { margin: m } },
+    TextColor: { color: Color.TextColor },
     Row: {
         display: 'flex',
         flexDirection: 'row',
