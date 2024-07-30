@@ -36,6 +36,49 @@ class HorizontalDivider extends Element {
     }
 }
 
+class Row extends Element {
+    
+    /**
+     * 
+     * @param { { id, items, styles, attrs } } props 
+     */
+    constructor(props) {
+        super(
+            { 
+                tag: 'div',
+                ...props
+            }
+        )
+        this.style(Style.Row)
+        for(const e of props.items) {
+            this.add(e)
+        }
+    }
+
+}
+
+
+class Column extends Element {
+    
+    /**
+     * 
+     * @param { { id, items, styles, attrs } } props 
+     */
+    constructor(props) {
+        super(
+            { 
+                tag: 'div',
+                ...props
+            }
+        )
+        this.style(Style.Column)
+        for(const e of props.items) {
+            this.add(e)
+        }
+    }
+}
+
+
 
 class Text extends Element {
 
@@ -86,17 +129,21 @@ class SvgIcon extends Element {
         )
     }
 
+    /**
+     * 
+     * @param { { svg, size, styles } } props 
+     */
     content(props) {
         if (props.svg) {
             super.content(props.svg)
         }
-        this.style(props.styles)
         this.style(
-            {
-                verticalAlign: 'top',
-                pointerEvents: 'none'
+            {   
+                ...props.styles,
+                verticalAlign: 'top', // svg bug
+                pointerEvents: 'none',
+                ...Style.Size(this.size)
             },
-            Style.Size(this.size)
         )
     }
 
@@ -119,7 +166,8 @@ class IconButton extends Element {
             {
                 display: 'flex',
                 padding: '8px',
-                borderRadius: '6px'
+                borderRadius: '6px',
+                ...Style.Pointer
             }
         )
         this.svg = new SvgIcon(
@@ -131,11 +179,6 @@ class IconButton extends Element {
         this.add(this.svg)
         this.hoverStyle(Style.EmptyBg, Style.CardBg)
     }
-
-    svgStyle(...styles) {
-        this.svg.style(styles)
-    }
-
 }
 
 class Button extends Element {
@@ -147,18 +190,16 @@ class Button extends Element {
     constructor(props) {
         super(
             {
-                tag: 'a',
+                tag: 'div',
                 ...props
-            }
-        )
-        this.style(
-            {
-                margin: '0px',
-                color: Color.TextColor,
             }
         )
         this.hoverStyle(Style.EmptyBg, Style.CardBg)
         this.style(
+            {
+                margin: '0px',
+                color: Color.TextColor,
+            },
             Style.BorderRadius('4px'),
             Style.Padding('4px 8px'),
             Style.Pointer
@@ -179,11 +220,11 @@ class Button extends Element {
             )
             this.add(this.svg)
             this.add(
-                new HorizontalSpace('4px')
+                new HorizontalSpace('8px')
             )
         }
         this.add(
-            new A(
+            new Text(
                 {
                     text: props.text,
                 }
@@ -200,11 +241,11 @@ class Button extends Element {
 
 }
 
-class Screen extends ElementCollection {
+class Route extends Element {
 
     /**
      * 
-     * @param { { id, el, styles } } props 
+     * @param { { id, styles } } props 
      */
     constructor(props) {
         super(
@@ -214,12 +255,11 @@ class Screen extends ElementCollection {
                     width: '100%',
                     height: '100%',
                     position: 'absolute',
-                    backgroundColor: Color.BgColor,
                 }
             }
         )
         if (props) {
-            this._id = props.id || 'screen'
+            this._id = props.id || 'route'
 
             if (props.styles) {
                 this.style(props.styles)
@@ -227,9 +267,7 @@ class Screen extends ElementCollection {
     
             this.add(props.el)   
         }
-
-        this.id = createTagName(this._id || 'screen')
-     
+        this.id = createTagName(this._id || 'route')
     }
 
     onmount() {
@@ -238,6 +276,25 @@ class Screen extends ElementCollection {
 
     onunmount() {
         console.log('onunmount ' + this.id);
+    }
+}
+
+class Screen extends Route {
+
+    /**
+     * 
+     * @param { { id, el, styles } } props 
+     */
+    constructor(props) {
+        super(
+            {
+                id: 'screen', 
+                styles: {
+                    backgroundColor: Color.BgColor,
+                }
+            }
+        )
+        
     }
 }
 
@@ -254,6 +311,7 @@ class Nav {
      * @param {Screen} newScreen 
      */
     setScreen(newScreen) {
+        if (!(newScreen instanceof Screen)) return
         if (this.screen) {
             this.screen.onunmount()
             this.screen.node.replaceWith(newScreen.node)
