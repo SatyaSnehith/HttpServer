@@ -34,12 +34,12 @@ const Icon = {
     strokeWidth: '1',
 
     set: (iconName, element) => {
-        // let icon = Icon.icons[iconName]
-        // console.log(icon)
-        // if (icon) {
-        //     Icon.setIcon(icon, element)
-        //     return 
-        // }
+        let icon = Icon.icons[iconName]
+        console.log(icon)
+        if (icon) {
+            Icon.setIcon(icon, element)
+            return 
+        }
         Icon.readSvg(
             iconName,
             (svg) => {
@@ -47,7 +47,7 @@ const Icon = {
                     .replaceAll('white', 'var(--text-color)')
                     // .replaceAll('stroke-width="1.5"', `stroke-width="${Icon.strokeWidth}"`)
                     // .replace(/(?:\r\n|\r|\n)/g, '')
-                // Icon.icons[iconName] = i
+                Icon.icons[iconName] = i
                 Icon.setIcon(i, element)
             }
         )

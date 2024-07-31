@@ -1,3 +1,5 @@
+const body = document.getElementsByTagName('body')[0]
+
 class HorizontalSpace extends Element {
     constructor(margin) {
         super(
@@ -245,7 +247,7 @@ class Route extends Element {
 
     /**
      * 
-     * @param { { id, styles } } props 
+     * @param { { id, el, styles, attrs } } props 
      */
     constructor(props) {
         super(
@@ -255,16 +257,13 @@ class Route extends Element {
                     width: '100%',
                     height: '100%',
                     position: 'absolute',
-                }
+                },
+                attrs: props.attrs,
             }
         )
         if (props) {
             this._id = props.id || 'route'
-
-            if (props.styles) {
-                this.style(props.styles)
-            }
-    
+            this.style(props.styles)
             this.add(props.el)   
         }
         this.id = createTagName(this._id || 'route')
@@ -298,11 +297,146 @@ class Screen extends Route {
     }
 }
 
+class Popup extends Route {
+
+    /**
+     * 
+     * @param { { id, el, cancelOnClickOutside } } props 
+     */
+    constructor(props) {
+        super(
+            {
+                id: 'popup',
+                attrs: {
+                    onclick: (e) => {
+                        if(e.target == this.node && props.cancelOnClickOutside) {
+                            this.dismiss()
+                        }
+                    }
+                }
+            }
+        )
+        this.popupContent = new Element(
+            {
+                tag: 'div',
+                styles: {
+                    backgroundColor: Color.BgColor,
+                },
+            }
+        )
+        this.add(this.popupContent)
+        if (props) {
+            this.popupContent.add(props.el)
+        }
+    }
+
+    show() {
+        body.appendChild(this.node)
+        this.onmount()
+    }
+
+    dismiss() {
+        this.onunmount()
+        body.removeChild(this.node)
+    }
+}
+
+class MenuPopup extends Popup {
+
+    /**
+     * 
+     * @param { { id, items } } props 
+     */
+    constructor(props) {
+        super(
+            {
+                cancelOnClickOutside: true
+            }
+        )
+        this.popupContent.style(
+            {
+                width: 'auto',
+                padding: '4px',
+                position: 'absolute',
+                borderRadius: '6px',
+                display: 'flex',
+                flexDirection: 'column',
+                ...Style.Border
+            },
+
+        )
+
+        for(const e of props.items) {
+            this.popupContent.add(e)
+        }
+
+    }
+
+    pos(event) {
+        const targetRect = event.target.getBoundingClientRect()
+
+        this.clientX = targetRect.left
+        this.clientY = targetRect.bottom
+
+        const absX = this.clientX + window.scrollX;
+        const absY = this.clientY + window.scrollY;
+
+        const nodeRect = this.node.getBoundingClientRect();
+        const dialogNodeRect = this.popupContent.node.getBoundingClientRect();
+        
+        const maxX = nodeRect.width - dialogNodeRect.width;
+        const maxY = nodeRect.height - dialogNodeRect.height;
+        
+        let x = Math.max(0, Math.min(absX, maxX));
+        let y = Math.max(0, Math.min(absY, maxY));
+        
+        if (x < 10) x = 10
+        if (y < 10) y = 10
+        this.popupContent.style({
+            left: x + "px",
+            top: y + "px"
+        })
+    }
+
+    show(event) {
+        super.show()
+        this.pos(event)
+    }
+
+}
+
+class Dialog extends Popup {
+
+    /**
+     * 
+     * @param { { id, items } } props
+     */
+    constructor(props) {
+        super( 
+            {
+                styles:  {
+                    backgroundColor: '#55555555'
+                }
+            }
+        )
+        this.popupContent.style(
+            {
+                width: '300px',
+                padding: '16px',
+                margin: 'auto'
+            }
+        )
+        for(const e of props.items) {
+            this.popupContent.add(e)
+        }
+    }
+}
+
+
 class Nav {
 
     constructor(el) {
-        this.screen = null
-        this.dialog = null
+        this.currentScreen = null
         this.body = el
     }
 
@@ -310,31 +444,18 @@ class Nav {
      * 
      * @param {Screen} newScreen 
      */
-    setScreen(newScreen) {
+    set screen(newScreen) {
         if (!(newScreen instanceof Screen)) return
-        if (this.screen) {
-            this.screen.onunmount()
-            this.screen.node.replaceWith(newScreen.node)
+        if (this.currentScreen) {
+            this.currentScreen.onunmount()
+            this.currentScreen.node.replaceWith(newScreen.node)
         } else {
             this.body.appendChild(newScreen.node)
         }
-        this.screen = newScreen
-        this.screen.onmount()
+        this.currentScreen = newScreen
+        this.currentScreen.onmount()
     }
-    
-    setDialog(dialog, event) {
-        if (dialog) {
-            this.body.appendChild(dialog.node)
-            dialog.onmount()
-        } else {
-            this.body.removeChild(this.dialog.node)
-        }
-        if (this.dialog) {
-            this.dialog.onunmount()
-        }
-        if (event) {
-            dialog.pos(event)
-        }
-        this.dialog = dialog
-    }
+
 }
+
+const mainNav = new Nav(body)
