@@ -23,6 +23,62 @@ class ThemePopup extends MenuPopup {
 }
 const themePopup = new ThemePopup()
 
+const buttons = (count) => {
+    const list = []
+    for (let i = 0; i < count; ++i) {
+        list.push(new HorizontalSpace('50px'))
+        list.push(
+            new IconButton(
+                {
+                    svgName: 'sun',
+                    attrs: {
+                        onclick: (event) => {
+                            themePopup.show(event)
+                        }
+                    }
+                }
+            )
+        )
+    }
+    return list
+
+}
+
+const buttonRow = () => {
+    return new Row(
+        {
+            items: buttons(20)
+        }
+    )
+}
+
+const buttonRowList = (count) => {
+    const list = []
+    for (let i = 0; i < count; ++i) {
+        list.push(new VerticalSpace('50px'))
+        list.push(
+            buttonRow()
+        )
+    }
+    return list
+}
+
+const buttonGrid = () => {
+    return new Column(
+        {
+            items: buttonRowList(20)
+        }
+    )
+}
+
+class PopupTestScreen extends Screen {
+
+    constructor() {
+        super()
+        this.add(buttonGrid())
+    }
+}
+
 class TodoScreen extends Screen {
 
     constructor() {
@@ -73,5 +129,5 @@ class TodoScreen extends Screen {
     }
 }
 
-mainNav.screen = new TodoScreen()
+mainNav.screen = new PopupTestScreen()
  

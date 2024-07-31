@@ -126,7 +126,11 @@ class SvgIcon extends Element {
         this.checkRef(
             props.svgName,
             (value) => {
-                Icon.set(value, this)
+                this.content(
+                    {
+                        svg: Icon.icons[value]
+                    }
+                )
             }
         )
     }
@@ -372,26 +376,18 @@ class MenuPopup extends Popup {
 
     }
 
-    pos(event) {
+    position(event) {
         const targetRect = event.target.getBoundingClientRect()
-
-        this.clientX = targetRect.left
-        this.clientY = targetRect.bottom
-
-        const absX = this.clientX + window.scrollX;
-        const absY = this.clientY + window.scrollY;
-
         const nodeRect = this.node.getBoundingClientRect();
-        const dialogNodeRect = this.popupContent.node.getBoundingClientRect();
-        
-        const maxX = nodeRect.width - dialogNodeRect.width;
-        const maxY = nodeRect.height - dialogNodeRect.height;
-        
-        let x = Math.max(0, Math.min(absX, maxX));
-        let y = Math.max(0, Math.min(absY, maxY));
-        
-        if (x < 10) x = 10
-        if (y < 10) y = 10
+        const popupNodeRect = this.popupContent.node.getBoundingClientRect();
+
+        let x, y
+        if (targetRect.left <= nodeRect.width - popupNodeRect.width) x = targetRect.left
+        else x = targetRect.right - popupNodeRect.width
+
+        if (targetRect.bottom <= nodeRect.height - popupNodeRect.height) y = targetRect.bottom
+        else y = targetRect.top - popupNodeRect.height
+
         this.popupContent.style({
             left: x + "px",
             top: y + "px"
@@ -400,7 +396,7 @@ class MenuPopup extends Popup {
 
     show(event) {
         super.show()
-        this.pos(event)
+        this.position(event)
     }
 
 }
