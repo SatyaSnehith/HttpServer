@@ -129,5 +129,29 @@ class TodoScreen extends Screen {
     }
 }
 
-mainNav.screen = new PopupTestScreen()
+const autoButtons = (count) => {
+    const list = []
+    for (let i = 0; i < count; ++i) {
+        list.push(
+            new Button(
+                {
+                    text: 'sunsunsun ' + i,
+                    svgName: 'sun',
+                }
+            )
+        )
+    }
+    return list
+
+}
+
+class AutoFillButtonTestScreen extends Screen {
+
+    constructor() {
+        super()
+    }
+}
+
+
+mainNav.screen = new HomeScreen()
  

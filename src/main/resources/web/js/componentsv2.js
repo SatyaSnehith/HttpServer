@@ -1,4 +1,31 @@
-const body = document.getElementsByTagName('body')[0]
+const body = document.body
+
+const SizeObserver = {
+    observers: [],
+    mobileMaxWidth: 760,
+    isMobile: body.clientWidth < this.mobileMaxWidth,
+    isMobileListening: false,
+
+    listen: function() {
+        this.isMobileListening = true
+        window
+            .matchMedia("(max-width: " + this.mobileMaxWidth + "px)")
+            .addEventListener("change", (x) => {
+                this.isMobile = x.matches
+                for (const observer of this.observers) {
+                    observer(this.isMobile)
+                }
+            });
+    },
+
+    addObserver: function(observer) {
+        if (!this.isMobileListening) {
+            this.listen()
+        }
+        this.observers.push(observer)
+    }
+}
+SizeObserver.addObserver((isMobile) => console.log("isMobile: " + isMobile))
 
 class HorizontalSpace extends Element {
     constructor(margin) {
@@ -79,8 +106,6 @@ class Column extends Element {
         }
     }
 }
-
-
 
 class Text extends Element {
 
@@ -244,7 +269,6 @@ class Button extends Element {
     href(ref) {
         this.node.href = ref
     }
-
 }
 
 class Route extends Element {
@@ -262,14 +286,12 @@ class Route extends Element {
                     height: '100%',
                     position: 'absolute',
                 },
-                attrs: props.attrs,
+                attrs: props?.attrs,
             }
         )
-        if (props) {
-            this._id = props.id || 'route'
-            this.style(props.styles)
-            this.add(props.el)   
-        }
+        this._id = props?.id ?? 'route'
+        this.style(props?.styles)
+        this.add(props?.el)   
         this.id = createTagName(this._id || 'route')
     }
 
@@ -286,15 +308,21 @@ class Screen extends Route {
 
     /**
      * 
-     * @param { { id, el, styles } } props 
+     * @param { { id, el, styles, attrs } } props 
      */
     constructor(props) {
         super(
             {
-                id: 'screen', 
-                styles: {
-                    backgroundColor: Color.BgColor,
-                }
+                id: props?.id ?? 'screen',
+                el: props?.el, 
+                styles: props?.styles,
+                attrs: props?.attrs
+            }
+        
+        )
+        this.style(
+            {
+                backgroundColor: Color.BgColor,
             }
         )
         
@@ -329,9 +357,7 @@ class Popup extends Route {
             }
         )
         this.add(this.popupContent)
-        if (props) {
-            this.popupContent.add(props.el)
-        }
+        this.popupContent.add(props?.el)
     }
 
     show() {

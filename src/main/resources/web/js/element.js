@@ -24,13 +24,11 @@ class Element {
      * @param { { tag, id, styles, attrs } } props 
      */
     constructor(props) {
-        if (props) {
-            this.createElement(props.tag)
-            this.style(props.styles)
-            this.attr(props.attrs)
-            if (props.id) {
-                this.id = createTagName(props.id)
-            }
+        this.createElement(props?.tag)
+        this.style(props?.styles)
+        this.attr(props?.attrs)
+        if (props?.id) {
+            this.id = createTagName(props.id)
         }
     }
 

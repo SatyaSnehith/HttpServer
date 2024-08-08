@@ -109,5 +109,3 @@ const Icon = {
             .catch((e) => console.error(e));
     }
 }
-
-Icon.initIcons()
