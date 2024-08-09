@@ -281,7 +281,14 @@ class Tabs extends RefElementCollection {
 
     /**
      * 
-     * @param { { id, selectedItem, tabItems: RefArray, toElement, styles, attrs } } props 
+     * @param { { 
+     * id: String, 
+     * selectedItem: Ref, 
+     * tabItems: RefArray, 
+     * toElement: Function, 
+     * styles: Object, 
+     * attrs: Object 
+     * } } props
      */
     constructor(props) {
         super(
@@ -338,6 +345,7 @@ class Tabs extends RefElementCollection {
                 return i.text === text
             }
         )
+        if (!item) return
         item.selected.value = !item.selected.value
     }
 
@@ -347,6 +355,46 @@ class Tabs extends RefElementCollection {
             selected : ref(selected)
         }
     }
+
+    /**
+     * 
+     * @param { Array<String> } textList 
+     * @returns 
+     */
+    static createTabItems(...textList) {
+        return refArray(
+            ...textList.map(
+                t => Tabs.createTabItem(t)
+            )
+        )
+    }
+}
+
+class State extends Element {
+    
+    /**
+     * 
+     * @param { { id, styles, attrs } } props 
+     */
+    constructor(props) {
+        super(
+            {
+                tag: 'div',
+                ...props
+            }
+        )
+        this.child = undefined
+    }
+
+    set el(el) {
+        if (this.child) {
+            this.child.node.replaceWith(el.node)
+        } else {
+            this.add(el)
+        }
+        this.child = el
+    }
+
 }
 
 class Route extends Element {
