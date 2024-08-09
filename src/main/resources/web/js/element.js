@@ -109,8 +109,8 @@ class Element {
     checkRef(data, onUpdate) {
         if (data instanceof Ref) {
             data.addObserver(
-                (value) => {
-                    onUpdate(value)
+                (value, oldValue) => {
+                    onUpdate(value, oldValue)
                 }
             )
             onUpdate(data.value) 

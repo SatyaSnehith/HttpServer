@@ -101,7 +101,7 @@ class Column extends Element {
             }
         )
         this.style(Style.Column)
-        for(const e of props.items) {
+        for(const e of props?.items ?? []) {
             this.add(e)
         }
     }
@@ -118,7 +118,13 @@ class Text extends Element {
             {
                 tag: 'div',
                 attrs: props.attrs,
-                styles: props.styles,
+                styles: {
+                    ...{
+                        margin: '0px',
+                        color: Color.TextColor,
+                    },
+                    ...props.styles,
+                }
             }
         )
         this.checkRef(
@@ -268,6 +274,78 @@ class Button extends Element {
 
     href(ref) {
         this.node.href = ref
+    }
+}
+
+class Tabs extends RefElementCollection {
+
+    /**
+     * 
+     * @param { { id, selectedItem, tabItems: RefArray, toElement, styles, attrs } } props 
+     */
+    constructor(props) {
+        super(
+            {
+                tag: 'div',
+                items: props.tabItems,
+                toElement: (item) => {
+                    const text = new Text(
+                        {
+                            text: item.text,
+                            styles: {
+                                padding: '8px',
+                            },
+                            attrs: {
+                                onclick: () => {
+                                    props.selectedItem.value = item.text
+                                }
+                            }
+                        }
+                    )
+                    text.checkRef(
+                        item.selected,
+                        (selected) => {
+                            text.style(
+                                {
+                                    color: selected ? Color.TextColor : Color.DescriptionColor,
+                                    fontWeight: selected ? '300' : '200',
+                                }
+                            )
+                        }
+                    )
+                    return text
+                },
+                styles: {
+                    display: 'flex',
+                }
+            }
+        )
+        this.tabItems = props.tabItems
+        this.checkRef(
+            props.selectedItem,
+            (value, oldValue) => {
+                if (oldValue === value) return
+                this.swapSelection(value)
+                this.swapSelection(oldValue)
+            }
+        )
+    }
+
+    swapSelection(text) {
+        if (!text) return
+        const item = this.tabItems.find(
+            (i) => {
+                return i.text === text
+            }
+        )
+        item.selected.value = !item.selected.value
+    }
+
+    static createTabItem(text, selected = false) {
+        return {
+            text: text,
+            selected : ref(selected)
+        }
     }
 }
 

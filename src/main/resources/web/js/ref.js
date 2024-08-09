@@ -14,9 +14,10 @@ class Ref {
     }
 
     set value(value) {
+        const oldValue = this._value
         this._value = value
         for (const observer of this.observers) {
-            observer(value)
+            observer(value, oldValue)
         }
     }
 
@@ -119,6 +120,14 @@ class RefArray {
      */
     findIndex(condition, defaultValue) {
         return this._values.findIndex(condition, defaultValue);
+    }
+
+    /**
+     * 
+     * @param {function} condition 
+     */
+    find(condition) {
+        return this._values.find(condition);
     }
 
     addValue(value) {

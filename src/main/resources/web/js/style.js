@@ -3,6 +3,7 @@ const Color = {
     BgColor: 'var(--bg-color)',
     CardColor: 'var(--card-color)',
     BorderColor: 'var(--border-color)',
+    DescriptionColor: 'var(--description-color)',
 }
 
 const Style = {
