@@ -79,7 +79,7 @@ class Row extends Element {
             }
         )
         this.style(Style.Row)
-        for(const e of props.items) {
+        for(const e of props?.items ?? []) {
             this.add(e)
         }
     }
@@ -146,24 +146,26 @@ class SvgIcon extends Element {
     constructor(props) {
         super()
         this.size = props.size || '18px'
-        const svg = '<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"></svg>'
-        this.node = fromHTML(svg)
-        this.content(
+        this.node = fromHTML(Icon.icons[props.svgName])
+        this.style(
             {
-                styles: props.styles,
+                ...Style.Size(this.size),
+                ...props.styles,
+                stoke: Color.TextColor,
+                ...Style.Size(this.size),
             }
         )
         this.attr(props.attrs)
-        this.checkRef(
-            props.svgName,
-            (value) => {
-                this.content(
-                    {
-                        svg: Icon.icons[value]
-                    }
-                )
-            }
-        )
+        // this.checkRef(
+        //     props.svgName,
+        //     (value) => {
+        //         this.content(
+        //             {
+        //                 svg: Icon.icons[value]
+        //             }
+        //         )
+        //     }
+        // )
     }
 
     /**
@@ -175,11 +177,12 @@ class SvgIcon extends Element {
             super.content(props.svg)
         }
         this.style(
-            {   
+            {
                 ...props.styles,
                 verticalAlign: 'top', // svg bug
                 pointerEvents: 'none',
-                ...Style.Size(this.size)
+                ...Style.Size(this.size),
+                stoke: Color.TextColor,
             },
         )
     }
@@ -210,7 +213,7 @@ class IconButton extends Element {
         this.svg = new SvgIcon(
             {
                 svgName: props.svgName,
-                size: '16px'
+                size: '16px',
             }
         )
         this.add(this.svg)
@@ -301,6 +304,7 @@ class Tabs extends RefElementCollection {
                             text: item.text,
                             styles: {
                                 padding: '8px',
+                                ...Style.Pointer
                             },
                             attrs: {
                                 onclick: () => {
