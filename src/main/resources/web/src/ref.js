@@ -28,6 +28,11 @@ export class Ref {
     get observerCount() {
         return this.observers.length
     }
+
+    static getValue(pRef) {
+        if (pRef instanceof Ref) return pRef.value
+        else return pRef
+    }
 }
 
 export class RefArray {

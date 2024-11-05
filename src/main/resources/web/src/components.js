@@ -1,504 +1,737 @@
-class Row extends ElementCollection {
-    
-    /**
-     * 
-     * @param { { id, items, styles, attrs } } props 
-     */
-    constructor(props) {
-        super(
-            { 
-                tag: 'div',
-                ...props
-            }
-        )
-        this.style(
-            {
-                display: 'flex',
-                flexDirection: 'row'
-            }
-        )
-        for(const e of props.items) {
-            this.add(e)
-        }
-    }
+import {createTagName, Element, fromHTML, RefElementCollection} from "./element";
+import {Color, Icon, Style} from "./style";
+import {Ref, ref, refArray} from "./ref";
+
+
+const body = document.body
+
+const SizeObserver = {
+	observers: [],
+	mobileMaxWidth: 760,
+	isMobile: body.clientWidth < 760,
+	isMobileListening: false,
+
+	listen: function() {
+		this.isMobileListening = true
+		window
+			.matchMedia("(max-width: " + SizeObserver.mobileMaxWidth + "px)")
+			.addEventListener("change", (x) => {
+				this.isMobile = x.matches
+				for (const observer of this.observers) {
+					observer(this.isMobile)
+				}
+			});
+	},
+
+	addObserver: function(observer) {
+		if (!this.isMobileListening) {
+			this.listen()
+		}
+		this.observers.push(observer)
+	}
+}
+SizeObserver.addObserver((isMobile) => console.log("isMobile: " + isMobile))
+
+export class VerticalSpace extends Element {
+	constructor(margin) {
+		super(
+			{
+				tag: 'div',
+				styles: {
+					marginTop: margin
+				}
+			}
+		)
+	}
+}
+
+export class HorizontalSpace extends Element {
+	constructor(margin) {
+		super(
+			{
+				tag: 'div',
+				styles: {marginLeft: margin}
+			}
+		)
+	}
+}
+
+export class HorizontalDivider extends Element {
+
+	/**
+	 *
+	 * @param { { styles } } props
+	 */
+	constructor(
+		props
+	) {
+		super(
+			{
+				tag: 'div',
+				styles: {
+					height: '1px',
+					backgroundColor: Color.BorderColor,
+					...props.styles,
+				}
+			}
+		)
+	}
+}
+
+export class Row extends Element {
+
+	/**
+	 *
+	 * @param { { id, items, styles, attrs } } props
+	 */
+	constructor(props) {
+		super(
+			{
+				tag: 'div',
+				...props
+			}
+		)
+		this.style(Style.Row)
+		for(const e of props?.items ?? []) {
+			this.add(e)
+		}
+	}
 
 }
 
 
-class Column extends ElementCollection {
-    
-    /**
-     * 
-     * @param { { id, items, styles, attrs } } props 
-     */
-    constructor(props) {
-        super(
-            { 
-                tag: 'div',
-                ...props
-            }
-        )
-        this.style(
-            {
-                display: 'flex',
-                flexDirection: 'column'
-            }
-        )
-        for(const e of props.items) {
-            this.add(e)
-        }
-    }
+export class Column extends Element {
+
+	/**
+	 *
+	 * @param { { id, items, styles, attrs } } props
+	 */
+	constructor(props) {
+		super(
+			{
+				tag: 'div',
+				...props
+			}
+		)
+		this.style(Style.Column)
+		for(const e of props?.items ?? []) {
+			this.add(e)
+		}
+	}
+}
+
+export class Text extends Element {
+
+	/**
+	 *
+	 * @param { { text, styles, attrs } } props
+	 */
+	constructor(props) {
+		super(
+			{
+				tag: 'div',
+				attrs: props.attrs,
+				styles: {
+					...{
+						margin: '0px',
+						color: Color.TextColor,
+					},
+					...props.styles,
+				}
+			}
+		)
+		this.checkRef(
+			props.text,
+			(value) => {
+				this.content(value)
+			}
+		)
+	}
 
 }
 
-class HorizontalSpace extends Element {
-    constructor(margin) {
-        super(
-            {    
-                tag: 'div',
-                styles: { marginLeft: margin }
-            }
-        )
-    }
-}
+export class SvgIcon extends Element {
 
-class VerticalSpace extends Element {
-    constructor(margin) {
-        super(
-            {
-                tag: 'div', 
-                styles: {
-                    marginTop: margin
-                }
-            }
-        )
-    }
-}
+	/**
+	 *
+	 * @param { { svgName, size, styles, attrs } } props
+	 */
+	constructor(props) {
+		super()
+		this.size = props.size || '18px'
+		this.node = fromHTML(Icon.icons[props.svgName])
+		this.style(
+			{
+				...Style.Size(this.size),
+				...props.styles,
+				stoke: Color.TextColor,
+				...Style.Size(this.size),
+			}
+		)
+		this.attr(props.attrs)
+	}
 
-class HorizontalDivider extends Element {
-    constructor() {
-        super(
-            {
-                tag: 'div',
-                styles: { 
-                    height: '1px',
-                    backgroundColor: Color.BorderColor
-                }
-            }
-        )
-    }
-}
-
-class P extends Element {
-
-    /**
-     * 
-     * @param { { text, styles, attrs } } props 
-     */
-    constructor(props) {
-        super(
-            {
-                tag: 'a',
-                attrs: props.attrs,
-                styles: {
-                    ...{
-                        margin: '0px',
-                        color: Color.TextColor,
-                    },
-                    ...props.styles,
-                }
-            }
-        )
-        this.checkRef(
-            props.text,
-            (value) => {
-                this.content(value)
-            }
-        )
-    }
-    
-}
-
-class A extends Element {
-
-    /**
-     * 
-     * @param { { text, href, styles, attrs } } props 
-     */
-    constructor(props) {
-        super(
-            {
-                tag: 'a',
-                attrs: props.attrs,
-                styles: {
-                    ...{
-                        margin: '0px',
-                        color: Color.TextColor,
-                    },
-                    ...props.styles,
-                }
-            }
-        )
-        this.content(props.text)
-        if (props.href) {
-            this.href(props.href)
-        }
-    }
-
-    href(ref) {
-        this.node.href = ref
-    }
-    
-}
-
-class SvgIcon extends Element {
-
-    /**
-     * 
-     * @param { { svgName, size, styles, attrs } } props 
-     */
-    constructor(props) {
-        super()
-        this.size = props.size || '18px'
-        const svg = '<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"></svg>'
-        this.node = fromHTML(svg)
-        this.content(
-            {
-                styles: props.styles,
-            }
-        )
-        this.attr(props.attrs)
-        Icon.set(props.svgName, this)
-    }
-
-    content(props) {
-        if (props.svg) {
-            super.content(props.svg)
-        }
-        this.style(props.styles)
-        this.style(
-            {
-                verticalAlign: 'top',
-                pointerEvents: 'none'
-            },
-            Style.Size(this.size)
-        )
-    }
+	/**
+	 *
+	 * @param { { svg, size, styles } } props
+	 */
+	content(props) {
+		if (props.svg) {
+			super.content(props.svg)
+		}
+		this.style(
+			{
+				...props.styles,
+				verticalAlign: 'top', // svg bug
+				pointerEvents: 'none',
+				...Style.Size(this.size),
+				stoke: Color.TextColor,
+			},
+		)
+	}
 
 }
 
-class IconButton extends Element {
+export class IconButton extends Element {
 
-    /**
-     * 
-     * @param { { svgName, styles, attrs } } props 
-     */
-    constructor(props) {
-        super(
-            { 
-                tag: 'div',
-                ...props
-            }
-        )
-        this.style(
-            {
-                display: 'flex',
-                padding: '8px',
-                borderRadius: '6px'
-            }
-        )
-        this.svg = new SvgIcon(
-            {
-                svgName: props.svgName,
-                size: '16px'
-            }
-        )
-        this.add(this.svg)
-        this.hoverStyle(Style.EmptyBg, Style.CardBg)
-    }
+	/**
+	 *
+	 * @param { { svgName, styles, attrs } } props
+	 */
+	constructor(props) {
+		super(
+			{
+				tag: 'div',
+				...props
+			}
+		)
+		this.style(
+			{
+				display: 'flex',
+				padding: '8px',
+				borderRadius: '6px',
+				...Style.Pointer
+			}
+		)
+		this.svg = new SvgIcon(
+			{
+				svgName: Ref.getValue(props.svgName),
+				size: '16px',
+			}
+		)
+		this.checkRef(
+			props.svgName,
+			(value) => {
+		    console.log("svg change " + value)
+        this.svg.replaceNode(fromHTML(Icon.icons[value]))
+			}
+		)
+		this.add(this.svg)
+		this.hoverStyle(Style.EmptyBg, Style.CardBg)
+	}
+}
 
-    svgStyle(...styles) {
-        this.svg.style(styles)
-    }
+export class Button extends Element {
+
+	/**
+	 *
+	 * @param { { text, href, svgName, styles, attrs } } props
+	 */
+	constructor(props) {
+		super(
+			{
+				tag: 'div',
+				...props
+			}
+		)
+		this.hoverStyle(Style.EmptyBg, Style.CardBg)
+		this.style(
+			{
+				margin: '0px',
+				color: Color.TextColor,
+			},
+			Style.BorderRadius('4px'),
+			Style.Padding('4px 8px'),
+			Style.Pointer
+		)
+		if (props.svgName) {
+			this.style(
+				{
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
+				}
+			)
+			this.svg = new SvgIcon(
+				{
+					svgName: props.svgName,
+					size: '16px'
+				}
+			)
+			this.add(this.svg)
+			this.add(
+				new HorizontalSpace('8px')
+			)
+		}
+		this.add(
+			new Text(
+				{
+					text: props.text,
+				}
+			)
+		)
+		if (props.href) {
+			this.href(props.href)
+		}
+	}
+
+	href(ref) {
+		this.node.href = ref
+	}
+}
+
+export class Tabs extends RefElementCollection {
+
+	/**
+	 * @param { {
+	 * id: String,
+	 * selectedItem: Ref,
+	 * tabItems: RefArray,
+	 * toElement: Function,
+	 * styles: Object,
+	 * attrs: Object
+	 * } } props
+	 */
+	constructor(props) {
+		super(
+			{
+				tag: 'div',
+				items: props.tabItems,
+				toElement: props.toElement,
+				styles: {
+					display: 'flex',
+					...props.styles,
+				},
+				attrs: props.attrs
+			}
+		)
+		this.tabItems = props.tabItems
+		this.checkRef(
+			props.selectedItem,
+			(value, oldValue) => {
+				if (oldValue === value) return
+				this.swapSelection(value)
+				this.swapSelection(oldValue)
+			}
+		)
+	}
+
+	swapSelection(text) {
+		if (!text) return
+		const item = this.tabItems.find(
+			(i) => {
+				return i.text === text
+			}
+		)
+		if (!item) return
+		item.selected.value = !item.selected.value
+	}
+
+	static createTabItem(text, selected = false) {
+		return {
+			text: text,
+			selected : ref(selected)
+		}
+	}
+
+	/**
+	 *
+	 * @param { String } textList
+	 * @returns
+	 */
+	static createTabItems(...textList) {
+		return refArray(
+			...textList.map(
+				t => Tabs.createTabItem(t)
+			)
+		)
+	}
+}
+
+
+export class TitleTabs extends Tabs {
+	/**
+	 * @param { {
+	 * id: String,
+	 * selectedItem: Ref,
+	 * tabItems: RefArray,
+	 * styles: Object,
+	 * attrs: Object
+	 * } } props
+	 */
+	constructor(props) {
+		super(
+			{
+				...props,
+				toElement: (item) => {
+					const text = new Text(
+						{
+							text: item.text,
+							styles: {
+								padding: '6px',
+								...Style.Pointer
+							},
+							attrs: {
+								onclick: () => {
+									props.selectedItem.value = item.text
+								}
+							}
+						}
+					)
+					text.checkRef(
+						item.selected,
+						(selected) => {
+							text.style(
+								{
+									color: selected ? Color.TextColor : Color.DescriptionColor,
+									fontWeight: selected ? '300' : '200',
+								}
+							)
+						}
+					)
+					return text
+				}
+			}
+		)
+	}
+}
+
+export class UnderlineTabs extends Tabs {
+	/**
+	 * @param { {
+	 * id: String,
+	 * selectedItem: Ref,
+	 * tabItems: RefArray,
+	 * styles: Object,
+	 * attrs: Object
+	 * } } props
+	 */
+	constructor(props) {
+		super(
+			{
+				...props,
+				toElement: (item) => {
+					const column = new Column(
+						{
+							attrs: {
+								onclick: () => {
+									props.selectedItem.value = item.text
+								}
+							}
+						}
+					)
+					const text = new Text(
+						{
+							text: item.text,
+							styles: {
+								padding: '6px',
+								...Style.Pointer
+							},
+						}
+					)
+					const underline = new HorizontalDivider(
+						{
+							styles: {
+								height: '2px',
+								backgroundColor: Color.BgColor,
+								margin: '0px 6px',
+							}
+						}
+					)
+					column.add(text)
+					column.add(underline)
+					column.checkRef(
+						item.selected,
+						(selected) => {
+							text.style(
+								{
+									color: selected ? Color.TextColor : Color.DescriptionColor,
+									fontWeight: selected ? '300' : '200',
+								}
+							)
+							underline.style(
+								{
+									backgroundColor: selected ? Color.TextColor : Color.BgColor,
+								}
+							)
+						}
+					)
+					return column
+				}
+			}
+		)
+	}
+}
+
+export class State extends Element {
+
+	/**
+	 *
+	 * @param { { id, styles, attrs } } props
+	 */
+	constructor(props) {
+		super(
+			{
+				tag: 'div',
+				...props
+			}
+		)
+		this.child = undefined
+	}
+
+	set el(el) {
+		if (this.child) {
+			this.child.node.replaceWith(el.node)
+		} else {
+			this.add(el)
+		}
+		this.child = el
+	}
 
 }
 
-class Button extends Element {
+export class StateSet extends State {
+	/**
+	 *
+	 * @param { { id, states, selectedItem, styles, attrs } } props
+	 */
+	constructor(props) {
+		super(
+			{
+				tag: 'div',
+				...props
+			}
+		)
+		this.states = props.states
+		this.checkRef(
+			props.selectedItem,
+			(key) => {
+				this.el = this.states[key]
+			}
+		)
+	}
 
-    /**
-     * 
-     * @param { { text, href, svgName, styles, attrs } } props 
-     */
-    constructor(props) {
-        super(
-            {
-                tag: 'a',
-                ...props
-            }
-        )
-        this.style(
-            {
-                margin: '0px',
-                color: Color.TextColor,
-            }
-        )
-        this.hoverStyle(Style.EmptyBg, Style.CardBg)
-        this.style(
-            Style.BorderRadius('4px'),
-            Style.Padding('4px 8px'),
-            Style.Pointer
-        )
-        if (props.svgName) {
-            this.style(
-                {
-                    display: 'flex',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                }
-            )
-            this.svg = new SvgIcon(
-                {
-                    svgName: props.svgName,
-                    size: '16px'
-                }
-            )
-            this.add(this.svg)
-            this.add(
-                new HorizontalSpace('4px')
-            )
-        }
-        this.add(
-            new A(
-                {
-                    text: props.text,
-                }
-            )
-        )
-        if (props.href) {
-            this.href(props.href)
-        }
-    }
+	addState(key, element) {
+		this.states[key] = element
+	}
+}
 
-    href(ref) {
-        this.node.href = ref
-    }
+export class Route extends Element {
+
+	/**
+	 *
+	 * @param { { id, el, styles, attrs } } props
+	 */
+	constructor(props) {
+		super(
+			{
+				tag: 'div',
+				styles: {
+					width: '100%',
+					height: '100%',
+					position: 'absolute',
+				},
+				attrs: props?.attrs,
+			}
+		)
+		this._id = props?.id ?? 'route'
+		this.style(props?.styles)
+		this.add(props?.el)
+		this.id = createTagName(this._id || 'route')
+	}
+
+	onmount() {
+		console.log('onmount ' + this.id);
+	}
+
+	onunmount() {
+		console.log('onunmount ' + this.id);
+	}
+}
+
+export class Screen extends Route {
+
+	/**
+	 *
+	 * @param { { id, el, styles, attrs } } props
+	 */
+	constructor(props) {
+		super(
+			{
+				id: props?.id ?? 'screen',
+				el: props?.el,
+				styles: props?.styles,
+				attrs: props?.attrs
+			}
+
+		)
+		this.style(
+			{
+				backgroundColor: Color.BgColor,
+			}
+		)
+
+	}
+}
+
+export class Popup extends Route {
+
+	/**
+	 *
+	 * @param { { id, el, cancelOnClickOutside } } props
+	 */
+	constructor(props) {
+		super(
+			{
+				id: 'popup',
+				attrs: {
+					onclick: (e) => {
+						if(e.target == this.node && props.cancelOnClickOutside) {
+							this.dismiss()
+						}
+					}
+				}
+			}
+		)
+		this.popupContent = new Element(
+			{
+				tag: 'div',
+				styles: {
+					backgroundColor: Color.BgColor,
+				},
+			}
+		)
+		this.add(this.popupContent)
+		this.popupContent.add(props?.el)
+	}
+
+	show() {
+		body.appendChild(this.node)
+		this.onmount()
+	}
+
+	dismiss() {
+		this.onunmount()
+		body.removeChild(this.node)
+	}
+}
+
+export class MenuPopup extends Popup {
+
+	/**
+	 *
+	 * @param { { id, items } } props
+	 */
+	constructor(props) {
+		super(
+			{
+				cancelOnClickOutside: true
+			}
+		)
+		this.popupContent.style(
+			{
+				width: 'auto',
+				padding: '4px',
+				position: 'absolute',
+				borderRadius: '6px',
+				display: 'flex',
+				flexDirection: 'column',
+				...Style.Border
+			},
+
+		)
+
+		for(const e of props.items) {
+			this.popupContent.add(e)
+		}
+
+	}
+
+	position(event) {
+		const targetRect = event.target.getBoundingClientRect()
+		const nodeRect = this.node.getBoundingClientRect();
+		const popupNodeRect = this.popupContent.node.getBoundingClientRect();
+
+		let x, y
+		if (targetRect.left <= nodeRect.width - popupNodeRect.width) x = targetRect.left
+		else x = targetRect.right - popupNodeRect.width
+
+		if (targetRect.bottom <= nodeRect.height - popupNodeRect.height) y = targetRect.bottom
+		else y = targetRect.top - popupNodeRect.height
+
+		this.popupContent.style({
+			left: x + "px",
+			top: y + "px"
+		})
+	}
+
+	show(event) {
+		super.show()
+		this.position(event)
+	}
 
 }
 
-class Screen extends ElementCollection {
+export class Dialog extends Popup {
 
-    /**
-     * 
-     * @param { { id, el, styles } } props 
-     */
-    constructor(props) {
-        super(
-            {
-                tag: 'div', 
-                styles: {
-                    width: '100%',
-                    height: '100%',
-                    position: 'absolute',
-                    backgroundColor: Color.BgColor,
-                }
-            }
-        )
-
-        this.id = createTagName(props.id || 'screen')
-
-        if (props.styles) {
-            this.style(props.styles)
-        }
-
-        this.add(props.el)        
-    }
-
-    onmount() {
-        console.log('onmount ' + this.id);
-    }
-
-    onunmount() {
-        console.log('onunmount ' + this.id);
-    }
+	/**
+	 *
+	 * @param { { id, items } } props
+	 */
+	constructor(props) {
+		super(
+			{
+				styles:  {
+					backgroundColor: '#55555555'
+				}
+			}
+		)
+		this.popupContent.style(
+			{
+				width: '300px',
+				padding: '16px',
+				margin: 'auto'
+			}
+		)
+		for(const e of props.items) {
+			this.popupContent.add(e)
+		}
+	}
 }
 
-class Popup extends Element {
 
-    /**
-     * 
-     * @param { { id, items } } props 
-     */
-    constructor(props) {
-        super(
-            {
-                tag: 'div', 
-                styles: {
-                    width: '100%',
-                    height: '100%',
-                    position: 'absolute'
-                },
-                attrs: {
-                    onclick: (e) => {
-                        if(e.target == this.node) {
-                            mainNav.setDialog(null)
-                        }
-                    }
-                }
-            }
-        )
+export class Nav {
 
-        this.dialogElement = new Element(
-            {
-                tag: 'div',
-                styles: {
-                    width: 'auto',
-                    padding: '4px',
-                    backgroundColor: Color.BgColor,
-                    position: 'absolute',
-                    borderRadius: '6px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    ...Style.Border
-                },
-            }
+	constructor(el) {
+		this.currentScreen = null
+		this.body = el
+	}
 
-        )
+	/**
+	 *
+	 * @param {Screen} newScreen
+	 */
+	set screen(newScreen) {
+		if (!(newScreen instanceof Screen)) return
+		if (this.currentScreen) {
+			this.currentScreen.onunmount()
+			this.currentScreen.node.replaceWith(newScreen.node)
+		} else {
+			this.body.appendChild(newScreen.node)
+		}
+		this.currentScreen = newScreen
+		this.currentScreen.onmount()
+	}
 
-        this.add(this.dialogElement)
-
-        for(const e of props.items) {
-            this.dialogElement.add(e)
-        }
-
-    }
-
-    pos(event) {
-        const targetRect = event.target.getBoundingClientRect()
-
-        this.clientX = targetRect.left
-        this.clientY = targetRect.bottom
-
-        const absX = this.clientX + window.scrollX;
-        const absY = this.clientY + window.scrollY;
-
-        const nodeRect = this.node.getBoundingClientRect();
-        const dialogNodeRect = this.dialogElement.node.getBoundingClientRect();
-        
-        const maxX = nodeRect.width - dialogNodeRect.width - 10;
-        const maxY = nodeRect.height - dialogNodeRect.height - 10;
-        
-        let x = Math.max(0, Math.min(absX, maxX));
-        let y = Math.max(0, Math.min(absY, maxY));
-        
-        if (x < 10) x = 10
-        if (y < 10) y = 10
-        this.dialogElement.style({
-            left: x + "px",
-            top: y + "px"
-        })
-    }
-
-    onmount() {
-        console.log('onmount ' + this.id);
-    }
-
-    onunmount() {
-        console.log('onunmount ' + this.id);
-    }
 }
 
-class Dialog extends Element {
-
-    /**
-     * 
-     * @param { { id, items } } props
-     */
-    constructor(props) {
-        super( 
-            {
-                tag: 'div', 
-                styles: {
-                    display: 'flex',
-                    flexDirection: 'column',
-                    width: '100%',
-                    height: '100%',
-                    position: 'absolute'
-                },
-                attrs: {
-                    onclick: (e) => {
-                        if(e.target == this.node) {
-                            mainNav.setDialog(null)
-                            return false
-                        }
-                    }
-                }
-            }
-
-        )
-
-        this.style(
-            {
-                backgroundColor: '#55555555'
-            }
-        )
-        this.dialogNode = new Element(
-            {
-                tag: 'div',
-                styles: {
-                    width: '300px',
-                    padding: '16px',
-                    backgroundColor: Color.BgColor,
-                    margin: 'auto'
-                },
-            }
-        )
-        this.add(this.dialogNode)
-        for(const e of props.items) {
-            this.dialogNode.add(e)
-        }
-    }
-
-    onmount() {
-        console.log('onmount ' + this.id);
-    }
-
-    onunmount() {
-        console.log('onunmount ' + this.id);
-    }
-}
-
-class Nav {
-
-    constructor(el) {
-        this.screen = null
-        this.dialog = null
-        this.body = el
-    }
-
-    setScreen(newScreen) {
-        if (this.screen) {
-            this.screen.onunmount()
-            this.screen.node.replaceWith(newScreen.node)
-        } else {
-            this.body.appendChild(newScreen.node)
-        }
-        this.screen = newScreen
-        this.screen.onmount()
-    }
-    
-    setDialog(dialog, event) {
-        if (dialog) {
-            this.body.appendChild(dialog.node)
-            dialog.onmount()
-        } else {
-            this.body.removeChild(this.dialog.node)
-        }
-        if (this.dialog) {
-            this.dialog.onunmount()
-        }
-        if (event) {
-            dialog.pos(event)
-        }
-        this.dialog = dialog
-    }
-}

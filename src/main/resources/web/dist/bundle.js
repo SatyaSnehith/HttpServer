@@ -2,10 +2,10 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./src/componentsv2.js":
-/*!*****************************!*\
-  !*** ./src/componentsv2.js ***!
-  \*****************************/
+/***/ "./src/components.js":
+/*!***************************!*\
+  !*** ./src/components.js ***!
+  \***************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -1801,7 +1801,7 @@ var __webpack_exports__ = {};
   !*** ./src/index.js ***!
   \**********************/
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _componentsv2_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./componentsv2 */ "./src/componentsv2.js");
+/* harmony import */ var _components__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./components */ "./src/components.js");
 /* harmony import */ var _ref__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ref */ "./src/ref.js");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
@@ -1818,25 +1818,24 @@ function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new T
 function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
 
 
-
 var body = document.getElementsByTagName('body')[0];
-var mainNav = new _componentsv2_js__WEBPACK_IMPORTED_MODULE_0__.Nav(body);
+var mainNav = new _components__WEBPACK_IMPORTED_MODULE_0__.Nav(body);
 var homeUi = function homeUi(props) {
-  var topBar = new _componentsv2_js__WEBPACK_IMPORTED_MODULE_0__.Row({
+  var topBar = new _components__WEBPACK_IMPORTED_MODULE_0__.Row({
     styles: {
       padding: '4px',
       alignItems: 'center'
     }
   });
   var selectedTitle = (0,_ref__WEBPACK_IMPORTED_MODULE_1__.ref)('Files');
-  var titles = _componentsv2_js__WEBPACK_IMPORTED_MODULE_0__.Tabs.createTabItems('Files', 'Text');
-  var titleTabs = new _componentsv2_js__WEBPACK_IMPORTED_MODULE_0__.TitleTabs({
+  var titles = _components__WEBPACK_IMPORTED_MODULE_0__.Tabs.createTabItems('Files', 'Text');
+  var titleTabs = new _components__WEBPACK_IMPORTED_MODULE_0__.TitleTabs({
     tabItems: titles,
     selectedItem: selectedTitle
   });
   topBar.add(titleTabs);
-  topBar.add(new _componentsv2_js__WEBPACK_IMPORTED_MODULE_0__.HorizontalSpace('auto'));
-  topBar.add(new _componentsv2_js__WEBPACK_IMPORTED_MODULE_0__.IconButton({
+  topBar.add(new _components__WEBPACK_IMPORTED_MODULE_0__.HorizontalSpace('auto'));
+  topBar.add(new _components__WEBPACK_IMPORTED_MODULE_0__.IconButton({
     svgName: 'refresh',
     attrs: {
       onclick: function onclick() {
@@ -1845,8 +1844,8 @@ var homeUi = function homeUi(props) {
       }
     }
   }));
-  topBar.add(new _componentsv2_js__WEBPACK_IMPORTED_MODULE_0__.HorizontalSpace('4px'));
-  topBar.add(new _componentsv2_js__WEBPACK_IMPORTED_MODULE_0__.IconButton({
+  topBar.add(new _components__WEBPACK_IMPORTED_MODULE_0__.HorizontalSpace('4px'));
+  topBar.add(new _components__WEBPACK_IMPORTED_MODULE_0__.IconButton({
     svgName: 'sun',
     attrs: {
       onclick: function onclick() {
@@ -1855,8 +1854,8 @@ var homeUi = function homeUi(props) {
       }
     }
   }));
-  topBar.add(new _componentsv2_js__WEBPACK_IMPORTED_MODULE_0__.HorizontalSpace('4px'));
-  topBar.add(new _componentsv2_js__WEBPACK_IMPORTED_MODULE_0__.IconButton({
+  topBar.add(new _components__WEBPACK_IMPORTED_MODULE_0__.HorizontalSpace('4px'));
+  topBar.add(new _components__WEBPACK_IMPORTED_MODULE_0__.IconButton({
     svgName: 'settings',
     attrs: {
       onclick: function onclick() {
@@ -1865,17 +1864,17 @@ var homeUi = function homeUi(props) {
       }
     }
   }));
-  var filesCol = new _componentsv2_js__WEBPACK_IMPORTED_MODULE_0__.Column();
-  var textCol = new _componentsv2_js__WEBPACK_IMPORTED_MODULE_0__.Column();
+  var filesCol = new _components__WEBPACK_IMPORTED_MODULE_0__.Column();
+  var textCol = new _components__WEBPACK_IMPORTED_MODULE_0__.Column();
   var selectedFileType = (0,_ref__WEBPACK_IMPORTED_MODULE_1__.ref)('Admin');
-  var fileTypes = _componentsv2_js__WEBPACK_IMPORTED_MODULE_0__.Tabs.createTabItems('Admin', 'Users');
-  var fileTypeTabs = new _componentsv2_js__WEBPACK_IMPORTED_MODULE_0__.UnderlineTabs({
+  var fileTypes = _components__WEBPACK_IMPORTED_MODULE_0__.Tabs.createTabItems('Admin', 'Users');
+  var fileTypeTabs = new _components__WEBPACK_IMPORTED_MODULE_0__.UnderlineTabs({
     tabItems: fileTypes,
     selectedItem: selectedFileType
   });
   filesCol.add(fileTypeTabs);
-  var col = new _componentsv2_js__WEBPACK_IMPORTED_MODULE_0__.Column();
-  var s = new _componentsv2_js__WEBPACK_IMPORTED_MODULE_0__.StateSet({
+  var col = new _components__WEBPACK_IMPORTED_MODULE_0__.Column();
+  var s = new _components__WEBPACK_IMPORTED_MODULE_0__.StateSet({
     selectedItem: selectedTitle,
     states: {
       'Files': filesCol,
@@ -1911,7 +1910,7 @@ var HomeScreen = /*#__PURE__*/function (_Screen) {
       this.ui.selectedTitle.value = 'Text';
     }
   }]);
-}(_componentsv2_js__WEBPACK_IMPORTED_MODULE_0__.Screen);
+}(_components__WEBPACK_IMPORTED_MODULE_0__.Screen);
 mainNav.screen = new HomeScreen();
 })();
 
