@@ -1,13 +1,15 @@
-function fromHTML(html, trim = true) {
+import {Ref, RefArray} from "./ref";
+
+export function fromHTML(html, trim = true) {
     html = trim ? html.trim() : html;
     const template = document.createElement('template');
     template.innerHTML = html;
     return template.content.children[0];
 }
 
-const tagMap = {}
+export const tagMap = {}
 
-function createTagName(tag) {
+export function createTagName(tag) {
     let count = 1
     if (tagMap[tag]) {
         count = tagMap[tag]
@@ -17,7 +19,7 @@ function createTagName(tag) {
     return count == 1 ? tag : tag + (count - 1)
 }
 
-class Element {
+export class Element {
 
     /**
      * 
@@ -126,7 +128,7 @@ class Element {
     }
 }
 
-class ElementCollection extends Element {
+export class ElementCollection extends Element {
 
     /**
      * 
@@ -166,7 +168,7 @@ class ElementCollection extends Element {
     }
 }
 
-class RefElementCollection extends Element {
+export class RefElementCollection extends Element {
 
     /**
      * 

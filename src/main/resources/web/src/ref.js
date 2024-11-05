@@ -1,4 +1,4 @@
-class Ref {
+export class Ref {
 
     constructor(value) {
         this._value = value
@@ -30,7 +30,7 @@ class Ref {
     }
 }
 
-class RefArray {
+export class RefArray {
 
     constructor(...values) {
         this._values = []
@@ -185,7 +185,7 @@ class RefArray {
     }
 }
 
-class RefArrayObserver {
+export class RefArrayObserver {
     onUpdate(values) {}
     onAdd(value) {}
     onRemove(value, index) {}
@@ -194,7 +194,7 @@ class RefArrayObserver {
     onRemoveAll(values) {}
 }
 
-class RefArrayObserverLogger extends RefArrayObserver {
+export class RefArrayObserverLogger extends RefArrayObserver {
     onUpdate(values) {
         console.log("onUpdate: " + values);
     }
@@ -212,7 +212,7 @@ class RefArrayObserverLogger extends RefArrayObserver {
     }
 }
 
-const refArray = (...values) => new RefArray(...values)
+export const refArray = (...values) => new RefArray(...values)
 
-const ref = (value) => new Ref(value)  
+export const ref = (value) => new Ref(value)
 

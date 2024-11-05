@@ -10,7 +10,7 @@ const homeUi = (props) => {
     )
     const selectedTitle = ref('Files')
     const titles = Tabs.createTabItems('Files', 'Text')
-    const titleTabs = new Tabs(
+    const titleTabs = new TitleTabs(
         {
             tabItems: titles,
             selectedItem: selectedTitle
@@ -18,6 +18,15 @@ const homeUi = (props) => {
     )
     topBar.add(titleTabs)
     topBar.add(new HorizontalSpace('auto'))
+    topBar.add(
+        new IconButton(
+            {
+                svgName: 'refresh',
+                attrs: { onclick: () => props?.onRefreshClicked?.() }
+            }
+        )
+    )
+    topBar.add(new HorizontalSpace('4px'))
     topBar.add(
         new IconButton(
             {
@@ -35,37 +44,34 @@ const homeUi = (props) => {
     topBar.add(
         new IconButton(
             {
-                svgName: 'refresh',
-                attrs: {
-                    onclick: () => props?.onRefreshClicked?.()
-                }
-            }
-        )
-    )
-    topBar.add(new HorizontalSpace('4px'))
-    topBar.add(
-        new IconButton(
-            {
                 svgName: 'settings',
-                attrs: {
-                    onclick: () => props?.onSettingsClicked?.()
-                }
+                attrs: { onclick: () => props?.onSettingsClicked?.() }
             }
         )
     )
-    const col = new Column()
-    
-    const s = new State()
-    s.checkRef(
-        selectedTitle,
-        (v) => {
-            s.el = new Text(
-                {
-                    text: v
-                }
-            )
+    const filesCol = new Column()
+    const textCol = new Column()
+    const selectedFileType = ref('Admin')
+    const fileTypes = Tabs.createTabItems('Admin', 'Users')
+    const fileTypeTabs = new UnderlineTabs(
+        {
+            tabItems: fileTypes,
+            selectedItem: selectedFileType
         }
     )
+    filesCol.add(fileTypeTabs)
+    const col = new Column()
+    
+    const s = new StateSet(
+        {
+            selectedItem: selectedTitle,
+            states: {
+                'Files': filesCol,
+                'Text': textCol
+            }
+        }
+    )
+
 
     col.add(topBar)
     col.add(s)
@@ -92,3 +98,5 @@ class HomeScreen extends Screen {
         this.ui.selectedTitle.value = 'Text'
     }
 }
+
+mainNav.screen = new HomeScreen()

@@ -1,4 +1,4 @@
-const Color = {
+export const Color = {
     TextColor: 'var(--text-color)',
     BgColor: 'var(--bg-color)',
     CardColor: 'var(--card-color)',
@@ -6,7 +6,7 @@ const Color = {
     DescriptionColor: 'var(--description-color)',
 }
 
-const Style = {
+export const Style = {
     CardBg: { backgroundColor: Color.CardColor },
     EmptyBg: { backgroundColor: '' },
     BorderRadius: (br) => { return { borderRadius: br } },
@@ -30,7 +30,7 @@ const Style = {
     }
 }
 
-const Icon = {
+export const Icon = {
     icons: {
         sun: '<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 12.6364C11.0083 12.6364 12.6364 11.0083 12.6364 9.00001C12.6364 6.9917 11.0083 5.36365 9 5.36365C6.9917 5.36365 5.36364 6.9917 5.36364 9.00001C5.36364 11.0083 6.9917 12.6364 9 12.6364Z" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 1V2.45455" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 15.5455V17" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.34182 3.3418L4.37455 4.37452" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.6255 13.6254L14.6582 14.6582" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 9H2.45455" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M15.5455 9H17" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.34182 14.6582L4.37455 13.6254" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.6255 4.37452L14.6582 3.3418" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
         moon: '<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17 9.72072C16.8599 11.237 16.2908 12.682 15.3594 13.8867C14.428 15.0914 13.1728 16.0059 11.7406 16.5232C10.3084 17.0405 8.7585 17.1392 7.27225 16.8078C5.786 16.4764 4.42487 15.7286 3.34813 14.6519C2.27138 13.5751 1.52356 12.214 1.19216 10.7277C0.860763 9.2415 0.959498 7.6916 1.47681 6.25942C1.99413 4.82724 2.90862 3.572 4.1133 2.64059C5.31797 1.70918 6.76299 1.14012 8.27928 1C7.39154 2.20101 6.96435 3.68075 7.07542 5.1701C7.18648 6.65945 7.82842 8.05947 8.88447 9.11553C9.94053 10.1716 11.3405 10.8135 12.8299 10.9246C14.3192 11.0356 15.799 10.6085 17 9.72072Z" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',

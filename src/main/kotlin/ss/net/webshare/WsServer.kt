@@ -8,5 +8,13 @@ class WsServer: HttpServer() {
     val mainFolder = MainFolder()
     val userManager = UserManager()
 
+    init {
+        addRoutes {
+            static(
+                hashMapOf(
 
+                )
+            )
+        }
+    }
 }

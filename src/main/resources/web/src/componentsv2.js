@@ -1,15 +1,23 @@
+import './element.js'
+import {createTagName, Element, fromHTML} from "./element";
+import './style.js'
+import './ref.js'
+import {RefElementCollection} from "./element";
+import {Color, Icon, Style} from "./style";
+import {ref, refArray} from "./ref";
+
 const body = document.body
 
 const SizeObserver = {
     observers: [],
     mobileMaxWidth: 760,
-    isMobile: body.clientWidth < this.mobileMaxWidth,
+    isMobile: body.clientWidth < 760,
     isMobileListening: false,
 
     listen: function() {
         this.isMobileListening = true
         window
-            .matchMedia("(max-width: " + this.mobileMaxWidth + "px)")
+            .matchMedia("(max-width: " + SizeObserver.mobileMaxWidth + "px)")
             .addEventListener("change", (x) => {
                 this.isMobile = x.matches
                 for (const observer of this.observers) {
@@ -27,7 +35,7 @@ const SizeObserver = {
 }
 SizeObserver.addObserver((isMobile) => console.log("isMobile: " + isMobile))
 
-class HorizontalSpace extends Element {
+export class HorizontalSpace extends Element {
     constructor(margin) {
         super(
             {    
@@ -38,7 +46,7 @@ class HorizontalSpace extends Element {
     }
 }
 
-class VerticalSpace extends Element {
+export class VerticalSpace extends Element {
     constructor(margin) {
         super(
             {
@@ -51,21 +59,31 @@ class VerticalSpace extends Element {
     }
 }
 
-class HorizontalDivider extends Element {
-    constructor() {
+export class HorizontalDivider extends Element {
+    
+    /**
+     * 
+     * @param { 
+     * styles: Object,
+     * } props 
+     */
+    constructor(
+        props
+    ) {
         super(
             {
                 tag: 'div',
-                styles: { 
+                styles: {
                     height: '1px',
-                    backgroundColor: Color.BorderColor
+                    backgroundColor: Color.BorderColor,
+                    ...props.styles,
                 }
             }
         )
     }
 }
 
-class Row extends Element {
+export class Row extends Element {
     
     /**
      * 
@@ -87,7 +105,7 @@ class Row extends Element {
 }
 
 
-class Column extends Element {
+export class Column extends Element {
     
     /**
      * 
@@ -107,7 +125,7 @@ class Column extends Element {
     }
 }
 
-class Text extends Element {
+export class Text extends Element {
 
     /**
      * 
@@ -137,7 +155,7 @@ class Text extends Element {
     
 }
 
-class SvgIcon extends Element {
+export class SvgIcon extends Element {
 
     /**
      * 
@@ -189,7 +207,7 @@ class SvgIcon extends Element {
 
 }
 
-class IconButton extends Element {
+export class IconButton extends Element {
 
     /**
      * 
@@ -221,7 +239,7 @@ class IconButton extends Element {
     }
 }
 
-class Button extends Element {
+export class Button extends Element {
 
     /**
      * 
@@ -280,15 +298,14 @@ class Button extends Element {
     }
 }
 
-class Tabs extends RefElementCollection {
+export class Tabs extends RefElementCollection {
 
     /**
-     * 
      * @param { { 
      * id: String, 
      * selectedItem: Ref, 
      * tabItems: RefArray, 
-     * toElement: Function, 
+     * toElement: Function,
      * styles: Object, 
      * attrs: Object 
      * } } props
@@ -298,37 +315,12 @@ class Tabs extends RefElementCollection {
             {
                 tag: 'div',
                 items: props.tabItems,
-                toElement: (item) => {
-                    const text = new Text(
-                        {
-                            text: item.text,
-                            styles: {
-                                padding: '8px',
-                                ...Style.Pointer
-                            },
-                            attrs: {
-                                onclick: () => {
-                                    props.selectedItem.value = item.text
-                                }
-                            }
-                        }
-                    )
-                    text.checkRef(
-                        item.selected,
-                        (selected) => {
-                            text.style(
-                                {
-                                    color: selected ? Color.TextColor : Color.DescriptionColor,
-                                    fontWeight: selected ? '300' : '200',
-                                }
-                            )
-                        }
-                    )
-                    return text
-                },
+                toElement: props.toElement,
                 styles: {
                     display: 'flex',
-                }
+                    ...props.styles,
+                },
+                attrs: props.attrs
             }
         )
         this.tabItems = props.tabItems
@@ -374,7 +366,122 @@ class Tabs extends RefElementCollection {
     }
 }
 
-class State extends Element {
+
+export class TitleTabs extends Tabs {
+    /**
+     * @param { { 
+     * id: String, 
+     * selectedItem: Ref, 
+     * tabItems: RefArray, 
+     * styles: Object, 
+     * attrs: Object 
+     * } } props
+     */
+    constructor(props) {
+        super(
+            {
+                ...props,
+                toElement: (item) => {
+                    const text = new Text(
+                        {
+                            text: item.text,
+                            styles: {
+                                padding: '6px',
+                                ...Style.Pointer
+                            },
+                            attrs: {
+                                onclick: () => {
+                                    props.selectedItem.value = item.text
+                                }
+                            }
+                        }
+                    )
+                    text.checkRef(
+                        item.selected,
+                        (selected) => {
+                            text.style(
+                                {
+                                    color: selected ? Color.TextColor : Color.DescriptionColor,
+                                    fontWeight: selected ? '300' : '200',
+                                }
+                            )
+                        }
+                    )
+                    return text
+                }
+            }
+        )
+    }
+}
+
+export class UnderlineTabs extends Tabs {
+    /**
+     * @param { { 
+     * id: String, 
+     * selectedItem: Ref, 
+     * tabItems: RefArray, 
+     * styles: Object, 
+     * attrs: Object 
+     * } } props
+     */
+    constructor(props) {
+        super(
+            {
+                ...props,
+                toElement: (item) => {
+                    const column = new Column(
+                        {
+                            attrs: {
+                                onclick: () => {
+                                    props.selectedItem.value = item.text
+                                }
+                            }
+                        }
+                    )
+                    const text = new Text(
+                        {
+                            text: item.text,
+                            styles: {
+                                padding: '6px',
+                                ...Style.Pointer
+                            },
+                        }
+                    )
+                    const underline = new HorizontalDivider(
+                        {
+                            styles: {
+                                height: '2px',
+                                backgroundColor: Color.BgColor,
+                                margin: '0px 6px',
+                            }
+                        }
+                    )
+                    column.add(text)
+                    column.add(underline)
+                    column.checkRef(
+                        item.selected,
+                        (selected) => {
+                            text.style(
+                                {
+                                    color: selected ? Color.TextColor : Color.DescriptionColor,
+                                    fontWeight: selected ? '300' : '200',
+                                }
+                            )
+                            underline.style(
+                                {
+                                    backgroundColor: selected ? Color.TextColor : Color.BgColor,
+                                }
+                            )
+                        }
+                    )
+                    return column
+                }
+            }
+        )
+    }
+}
+
+export class State extends Element {
     
     /**
      * 
@@ -401,7 +508,33 @@ class State extends Element {
 
 }
 
-class Route extends Element {
+export class StateSet extends State {
+    /**
+     * 
+     * @param { { id, states, selectedItem, styles, attrs } } props 
+     */
+    constructor(props) {
+        super(
+            {
+                tag: 'div',
+                ...props
+            }
+        )
+        this.states = props.states
+        this.checkRef(
+            props.selectedItem,
+            (key) => {
+                this.el = this.states[key]
+            }
+        )
+    }
+
+    addState(key, element) {
+        this.states[key] = element
+    }
+}
+
+export class Route extends Element {
 
     /**
      * 
@@ -434,7 +567,7 @@ class Route extends Element {
     }
 }
 
-class Screen extends Route {
+export class Screen extends Route {
 
     /**
      * 
@@ -459,7 +592,7 @@ class Screen extends Route {
     }
 }
 
-class Popup extends Route {
+export class Popup extends Route {
 
     /**
      * 
@@ -501,7 +634,7 @@ class Popup extends Route {
     }
 }
 
-class MenuPopup extends Popup {
+export class MenuPopup extends Popup {
 
     /**
      * 
@@ -557,7 +690,7 @@ class MenuPopup extends Popup {
 
 }
 
-class Dialog extends Popup {
+export class Dialog extends Popup {
 
     /**
      * 
@@ -585,7 +718,7 @@ class Dialog extends Popup {
 }
 
 
-class Nav {
+export class Nav {
 
     constructor(el) {
         this.currentScreen = null
@@ -610,4 +743,3 @@ class Nav {
 
 }
 
-const mainNav = new Nav(body)
