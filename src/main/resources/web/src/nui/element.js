@@ -19,13 +19,19 @@ export function createTagName(tag) {
 	return count == 1 ? tag : tag + (count - 1)
 }
 
+let tabIndex = 0
+
+export function getTabIndex() {
+	return (++tabIndex).toString()
+}
+
 export class Element {
 
 	/**
 	 *
 	 * @param { { tag, id, styles, attrs } } props
 	 */
-	constructor(props) {
+	constructor(props = {}) {
 		this.createElement(props?.tag)
 		this.style(props?.styles)
 		this.attr(props?.attrs)
@@ -73,6 +79,7 @@ export class Element {
 	}
 
 	attr(...attrs) {
+		if (!this.node) return
 		if (attrs) {
 			for (let i = 0; i < attrs.length; ++i) {
 				const attr = attrs[i]
@@ -133,6 +140,8 @@ export class Element {
 		element.node = node
 		return element
 	}
+
+	static tabIndex = 0
 }
 
 export class ElementCollection extends Element {

@@ -5,7 +5,7 @@ import {Ref, ref, refArray} from "./ref";
 
 const body = document.body
 
-const SizeObserver = {
+export const SizeObserver = {
 	observers: [],
 	mobileMaxWidth: 760,
 	isMobile: body.clientWidth < 760,
@@ -27,6 +27,7 @@ const SizeObserver = {
 		if (!this.isMobileListening) {
 			this.listen()
 		}
+		observer(this.isMobile)
 		this.observers.push(observer)
 	}
 }
@@ -203,17 +204,18 @@ export class IconButton extends Element {
 		super(
 			{
 				tag: 'div',
-				...props
+				attrs: props.attrs,
+				styles: {
+					display: 'flex',
+					padding: '8px',
+					borderRadius: '6px',
+					alignItems: 'center',
+					...Style.Pointer,
+					...props.styles,
+				}
 			}
 		)
-		this.style(
-			{
-				display: 'flex',
-				padding: '8px',
-				borderRadius: '6px',
-				...Style.Pointer
-			}
-		)
+
 		this.svg = new SvgIcon(
 			{
 				svgName: Ref.getValue(props.svgName),

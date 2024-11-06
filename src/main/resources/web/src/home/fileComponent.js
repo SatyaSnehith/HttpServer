@@ -1,4 +1,4 @@
-import {Column, IconButton, Row, Text} from "../nui/components";
+import {Column, IconButton, Row, SizeObserver, Text} from "../nui/components";
 import {Color, Style} from "../nui/style";
 
 export default class FileComponent extends Column {
@@ -11,9 +11,34 @@ export default class FileComponent extends Column {
 					backgroundColor: Color.FileColor,
 					borderRadius: '8px',
 					...Style.Pointer
+				},
+				attrs: {
+					tabIndex: '0',
+					onclick: (e) => {
+						console.log(e)
+					}
 				}
 			}
 		);
+		SizeObserver.addObserver(
+			(isMobile) => {
+				if (isMobile) {
+					this.style(
+						{
+							width: '130px',
+							height: '160px',
+						}
+					)
+				} else {
+					this.style(
+						{
+							width: 130 * 1.5 + 'px',
+							height: 130 * 1.5 + 'px',
+						}
+					)
+				}
+			}
+		)
 
 		const preview = new Column(
 			{
@@ -41,6 +66,7 @@ export default class FileComponent extends Column {
 		const info = new Row(
 			{
 				styles: {
+					padding: '4px 8px',
 				}
 			}
 		)
@@ -50,9 +76,8 @@ export default class FileComponent extends Column {
 					text: "File name",
 					styles: {
 						width: '100%',
-						padding: '6px 10px',
 						alignContent: 'center',
-
+						textAlign: 'center',
 					}
 				}
 			)
@@ -60,7 +85,10 @@ export default class FileComponent extends Column {
 		info.add(
 			new IconButton(
 				{
-					svgName: 'moreVertical'
+					svgName: 'moreVertical',
+					styles: {
+						padding: '6px',
+					}
 				}
 			)
 		)

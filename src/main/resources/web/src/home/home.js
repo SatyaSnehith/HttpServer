@@ -14,7 +14,7 @@ const homeUi = (props) => {
 	const topBar = new Row(
 		{
 			styles: {
-				padding: '4px',
+				padding: '8px',
 				alignItems: 'center',
 				position: 'sticky',
 				top: '0',
@@ -37,7 +37,10 @@ const homeUi = (props) => {
 		new IconButton(
 			{
 				svgName: 'refresh',
-				attrs: { onclick: () => props?.onRefreshClicked?.() }
+				attrs: {
+					tabIndex: '0',
+					onclick: () => props?.onRefreshClicked?.()
+				}
 			}
 		)
 	)
@@ -48,6 +51,7 @@ const homeUi = (props) => {
 			{
 				svgName: themeIcon,
 				attrs: {
+					tabIndex: '0',
 					onclick: () => {
 						const body = document.body
 						body.classList.toggle('darkTheme')
@@ -66,7 +70,10 @@ const homeUi = (props) => {
 		new IconButton(
 			{
 				svgName: 'settings',
-				attrs: { onclick: () => props?.onSettingsClicked?.() }
+				attrs: {
+					tabIndex: '0',
+					onclick: () => props?.onSettingsClicked?.()
+				}
 			}
 		)
 	)

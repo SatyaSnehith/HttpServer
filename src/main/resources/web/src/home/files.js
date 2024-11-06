@@ -15,6 +15,7 @@ export default class FilesTab extends Element {
 					flexFlow: 'wrap',
 					padding: '16px',
 					gap: '16px',
+					justifyContent: 'center',
 				}
 			}
 		);
