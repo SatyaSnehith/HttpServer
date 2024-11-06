@@ -1,14 +1,26 @@
-import {Column} from "../nui/components";
 import FileComponent from "./fileComponent";
+import {Element} from "../nui/element";
 
 const filesUi = (props) => {
 
 }
 
-export default class FilesTab extends Column {
+export default class FilesTab extends Element {
 	constructor(props) {
-		super(props);
-		this.add(new FileComponent())
+		super(
+			{
+				tag: 'div',
+				styles: {
+					display: 'inline-flex',
+					flexFlow: 'wrap',
+					padding: '16px',
+					gap: '16px',
+				}
+			}
+		);
+		for(let i = 0; i <= 20; ++i) {
+			this.add(new FileComponent())
+		}
 	}
 }
 

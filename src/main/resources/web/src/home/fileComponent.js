@@ -1,4 +1,5 @@
-import {Column, Row, Text} from "../nui/components";
+import {Column, IconButton, Row, Text} from "../nui/components";
+import {Color, Style} from "../nui/style";
 
 export default class FileComponent extends Column {
 	constructor() {
@@ -6,32 +7,70 @@ export default class FileComponent extends Column {
 			{
 				styles: {
 					width: '130px',
-					height: '160px'
+					height: '160px',
+					backgroundColor: Color.FileColor,
+					borderRadius: '8px',
+					...Style.Pointer
 				}
 			}
 		);
-		const icon = new Column(
+
+		const preview = new Column(
 			{
 				styles: {
 					height: '100%',
+					padding: '6px',
 				}
 			}
 		)
-		this.add(icon)
+
+		const icon = new Column(
+			{
+				styles: {
+					backgroundColor: Color.FileInnerColor,
+					borderRadius: '4px',
+					height: '100%',
+					width: '100%',
+				}
+			}
+		)
+		preview.add(icon)
+
+		this.add(preview)
 
 		const info = new Row(
 			{
 				styles: {
-					padding: '6px 10px',
 				}
 			}
 		)
 		info.add(
 			new Text(
 				{
-					text: "File name"
+					text: "File name",
+					styles: {
+						width: '100%',
+						padding: '6px 10px',
+						alignContent: 'center',
+
+					}
 				}
 			)
+		)
+		info.add(
+			new IconButton(
+				{
+					svgName: 'moreVertical'
+				}
+			)
+		)
+		this.hoverStyle(
+			{
+				backgroundColor: Color.FileColor,
+			},
+			{
+				backgroundColor: Color.HoveredFileColor
+			}
 		)
 		this.add(info)
 	}

@@ -487,16 +487,10 @@ export class State extends Element {
 				...props
 			}
 		)
-		this.child = undefined
 	}
 
 	set el(el) {
-		if (this.child) {
-			this.child.node.replaceWith(el.node)
-		} else {
-			this.add(el)
-		}
-		this.child = el
+		this.replaceNode(el.node)
 	}
 
 }
@@ -507,12 +501,7 @@ export class StateSet extends State {
 	 * @param { { id, states, selectedItem, styles, attrs } } props
 	 */
 	constructor(props = {}) {
-		super(
-			{
-				tag: 'div',
-				...props
-			}
-		)
+		super(props)
 		this.states = props.states
 		this.checkRef(
 			props.selectedItem,
@@ -540,7 +529,6 @@ export class Route extends Element {
 				styles: {
 					width: '100%',
 					height: '100%',
-					position: 'absolute',
 				},
 				attrs: props?.attrs,
 			}

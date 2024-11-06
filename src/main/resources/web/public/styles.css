@@ -32,6 +32,9 @@
     --shadow-color: #000000;
     --infoKey-color: #888888;
     --progressBg-color: #424242;
+    --file-color: #1D1D1D;
+    --hovered-file-color: #242424;
+    --file-inner-color: #181818;
     --overlay-color: rgba(255, 255, 255, 0.25);
 
 }
@@ -58,10 +61,9 @@
 }
 
 body {
-    font-family: 'roboto';
+    font-family: 'roboto', monospace;
     margin: 0;
     max-width: 100%;
-    overflow-x: hidden;
-    overflow-y: hidden;
-    font-weight: 200;
+    font-weight: 300;
+    background: var(--bg-color);
 }

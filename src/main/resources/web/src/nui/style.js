@@ -4,6 +4,9 @@ export const Color = {
     CardColor: 'var(--card-color)',
     BorderColor: 'var(--border-color)',
     DescriptionColor: 'var(--description-color)',
+    FileColor: 'var(--file-color)',
+    HoveredFileColor: 'var(--hovered-file-color)',
+    FileInnerColor: 'var(--file-inner-color)',
 }
 
 export const Style = {

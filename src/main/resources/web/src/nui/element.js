@@ -35,7 +35,9 @@ export class Element {
 	}
 
 	createElement(tag) {
-		this.node = document.createElement(tag)
+		if(tag) {
+			this.node = document.createElement(tag)
+		}
 	}
 
 	/**

@@ -2,6 +2,7 @@ import {Column, HorizontalSpace, IconButton, Row, Screen, StateSet, Tabs, Text, 
 import {ref} from "../nui/ref";
 import {ApiCall} from "../nui/api";
 import FilesTab from "./files";
+import {Color} from "../nui/style";
 
 
 // https://www.youtube.com/watch?v=0fONene3OIA&ab_channel=BeyondFireship
@@ -15,6 +16,10 @@ const homeUi = (props) => {
 			styles: {
 				padding: '4px',
 				alignItems: 'center',
+				position: 'sticky',
+				top: '0',
+				backgroundColor: Color.BgColor,
+				zIndex: '100',
 			}
 		}
 	)
@@ -109,7 +114,7 @@ export default class HomeScreen extends Screen {
 				console.log("isLoading: " + data)
 			}
 		)
-		viewModel.getItems().then(r => {})
+		viewModel.getItems()
 
 		this.add(ui.el)
 		this.ui = ui
