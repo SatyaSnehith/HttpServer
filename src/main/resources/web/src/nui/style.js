@@ -11,6 +11,8 @@ export const Style = {
     EmptyBg: { backgroundColor: '' },
     BorderRadius: (br) => { return { borderRadius: br } },
     Size: s => { return { height: s, width: s } },
+    Height: h => { return { height: h } },
+    Width: w => { return { width: w } },
     Pointer: { cursor: 'pointer' },
     Padding: (p) => { return { padding: p } },
     Margin: (m) => { return { margin: m } },

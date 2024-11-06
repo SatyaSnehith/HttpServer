@@ -84,7 +84,7 @@ export class Row extends Element {
 	 *
 	 * @param { { id, items, styles, attrs } } props
 	 */
-	constructor(props) {
+	constructor(props = {}) {
 		super(
 			{
 				tag: 'div',
@@ -106,7 +106,7 @@ export class Column extends Element {
 	 *
 	 * @param { { id, items, styles, attrs } } props
 	 */
-	constructor(props) {
+	constructor(props = {}) {
 		super(
 			{
 				tag: 'div',
@@ -126,7 +126,7 @@ export class Text extends Element {
 	 *
 	 * @param { { text, styles, attrs } } props
 	 */
-	constructor(props) {
+	constructor(props = {}) {
 		super(
 			{
 				tag: 'div',
@@ -135,6 +135,7 @@ export class Text extends Element {
 					...{
 						margin: '0px',
 						color: Color.TextColor,
+						fontWeight: '300'
 					},
 					...props.styles,
 				}
@@ -156,7 +157,7 @@ export class SvgIcon extends Element {
 	 *
 	 * @param { { svgName, size, styles, attrs } } props
 	 */
-	constructor(props) {
+	constructor(props = {}) {
 		super()
 		this.size = props.size || '18px'
 		this.node = fromHTML(Icon.icons[props.svgName])
@@ -198,7 +199,7 @@ export class IconButton extends Element {
 	 *
 	 * @param { { svgName, styles, attrs } } props
 	 */
-	constructor(props) {
+	constructor(props = {}) {
 		super(
 			{
 				tag: 'div',
@@ -237,7 +238,7 @@ export class Button extends Element {
 	 *
 	 * @param { { text, href, svgName, styles, attrs } } props
 	 */
-	constructor(props) {
+	constructor(props = {}) {
 		super(
 			{
 				tag: 'div',
@@ -302,7 +303,7 @@ export class Tabs extends RefElementCollection {
 	 * attrs: Object
 	 * } } props
 	 */
-	constructor(props) {
+	constructor(props = {}) {
 		super(
 			{
 				tag: 'div',
@@ -369,7 +370,7 @@ export class TitleTabs extends Tabs {
 	 * attrs: Object
 	 * } } props
 	 */
-	constructor(props) {
+	constructor(props = {}) {
 		super(
 			{
 				...props,
@@ -394,7 +395,7 @@ export class TitleTabs extends Tabs {
 							text.style(
 								{
 									color: selected ? Color.TextColor : Color.DescriptionColor,
-									fontWeight: selected ? '300' : '200',
+									fontWeight: selected ? '400' : '300',
 								}
 							)
 						}
@@ -416,7 +417,7 @@ export class UnderlineTabs extends Tabs {
 	 * attrs: Object
 	 * } } props
 	 */
-	constructor(props) {
+	constructor(props = {}) {
 		super(
 			{
 				...props,
@@ -479,7 +480,7 @@ export class State extends Element {
 	 *
 	 * @param { { id, styles, attrs } } props
 	 */
-	constructor(props) {
+	constructor(props = {}) {
 		super(
 			{
 				tag: 'div',
@@ -505,7 +506,7 @@ export class StateSet extends State {
 	 *
 	 * @param { { id, states, selectedItem, styles, attrs } } props
 	 */
-	constructor(props) {
+	constructor(props = {}) {
 		super(
 			{
 				tag: 'div',
@@ -532,7 +533,7 @@ export class Route extends Element {
 	 *
 	 * @param { { id, el, styles, attrs } } props
 	 */
-	constructor(props) {
+	constructor(props = {}) {
 		super(
 			{
 				tag: 'div',
@@ -565,7 +566,7 @@ export class Screen extends Route {
 	 *
 	 * @param { { id, el, styles, attrs } } props
 	 */
-	constructor(props) {
+	constructor(props = {}) {
 		super(
 			{
 				id: props?.id ?? 'screen',
@@ -590,7 +591,7 @@ export class Popup extends Route {
 	 *
 	 * @param { { id, el, cancelOnClickOutside } } props
 	 */
-	constructor(props) {
+	constructor(props = {}) {
 		super(
 			{
 				id: 'popup',
@@ -632,7 +633,7 @@ export class MenuPopup extends Popup {
 	 *
 	 * @param { { id, items } } props
 	 */
-	constructor(props) {
+	constructor(props = {}) {
 		super(
 			{
 				cancelOnClickOutside: true
@@ -688,7 +689,7 @@ export class Dialog extends Popup {
 	 *
 	 * @param { { id, items } } props
 	 */
-	constructor(props) {
+	constructor(props = {}) {
 		super(
 			{
 				styles:  {
