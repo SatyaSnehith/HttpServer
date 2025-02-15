@@ -67,3 +67,7 @@ body {
     font-weight: 300;
     background: var(--bg-color);
 }
+.grid::after {
+    content: "";
+    flex: auto;
+}

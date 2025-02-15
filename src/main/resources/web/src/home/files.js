@@ -19,6 +19,7 @@ export default class FilesTab extends Element {
 				}
 			}
 		);
+		// this.node.classList += "grid"
 		for(let i = 0; i <= 20; ++i) {
 			this.add(new FileComponent())
 		}

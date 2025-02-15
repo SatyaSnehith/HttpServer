@@ -26,14 +26,14 @@ export default class FileComponent extends Column {
 					this.style(
 						{
 							width: '130px',
-							height: '160px',
+							height: '130px',
 						}
 					)
 				} else {
 					this.style(
 						{
-							width: 130 * 1.5 + 'px',
-							height: 130 * 1.5 + 'px',
+							width: 130 * 1.2 + 'px',
+							height: 130 * 1.2 + 'px',
 						}
 					)
 				}
@@ -44,7 +44,7 @@ export default class FileComponent extends Column {
 			{
 				styles: {
 					height: '100%',
-					padding: '6px',
+					padding: '6px 6px 0px 6px',
 				}
 			}
 		)
