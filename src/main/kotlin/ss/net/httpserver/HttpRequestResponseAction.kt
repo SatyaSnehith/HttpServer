@@ -177,13 +177,29 @@ class HttpRequestResponseAction: SocketLevelAction {
     }
 
     fun static(
-        fileMap: HashMap<String, IFile>,
+        fileMap: Map<String, IFile>,
     ) {
         for ((path, file) in fileMap) {
             if (path == "/index.html") {
                 get("/") {
-                    FileResponse(
-                        body = file
+                    StringResponse(
+                        body = """
+                            <!DOCTYPE html>
+                            <html>
+                                <head>
+                                    <meta charset="UTF-8">
+                                    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'>
+                                    <title>WebShare</title>
+                                    <link rel="stylesheet" href="styles.css">
+                                    <script defer src="bundle.js"></script>
+                                </head>
+                                <body class="darkTheme">
+                                </body>
+                            </html>
+                        """.trimIndent(),
+                        headers = Headers().apply {
+                            set(Headers.ContentType, "text/html")
+                        }
                     )
 
                 }

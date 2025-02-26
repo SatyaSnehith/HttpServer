@@ -10,8 +10,21 @@ import ss.net.sharer.message.ConnectResponse
 import ss.net.sharer.message.ConnectionStatus
 import ss.net.sharer.server.SharerServer
 import kotlinx.serialization.encodeToString
+import ss.io.file.IFile
 import java.io.File
-import java.net.URLClassLoader
+
+val webFiles = listOf(
+    "web/4a508eb5667fb9042644.woff2",
+    "web/4b432532fa948388046f.woff",
+    "web/5c5ff10473ac9b95f049.woff",
+    "web/26c9746e633c989a9b47.woff",
+    "web/bundle.js",
+    "web/bundle.js.map",
+    "web/d2316b3ad57dae5d46c2.woff2",
+    "web/de52a3d93f85dcb8da44.woff2",
+    "web/index.html",
+    "web/styles.css",
+)
 
 fun main(args: Array<String>) {
     startServer()
@@ -48,7 +61,10 @@ fun startServer() {
 //        File("new.txt").createNewFile()
 
         static(
-            fileMap = FileUtil.mapFromFolder("")
+            fileMap = webFiles.associate {
+                val file = File(ClassLoader.getSystemResource(it).file)
+                "/" + file.name to IFile.fromFile(file)
+            }
         )
         get("/dsa") {
             StringResponse(
